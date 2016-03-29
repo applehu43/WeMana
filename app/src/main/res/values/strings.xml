@@ -1,6 +1,11 @@
 <resources>
-    <string name="app_name">WeMana</string>
+    <string name="app_name">WeightManager</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="edit_message">input something here</string>
+
+    <string name="button_send">Send</string>
+    <string name="bn_test1">first test button</string>
+    <string name="bn_test2">second test button</string>
 </resources>
