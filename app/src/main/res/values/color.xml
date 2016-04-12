@@ -6,9 +6,13 @@
     <color name="back_blue">#3086E4</color>
     <color name="back_orange">#FF8000</color>
     <color name="light_blue">#40BAF8</color>
-    <color name="light_grey">#ADAEAD</color>
+    <color name="light_grey">#F1F1F1</color>
     <color name="light_green">#CCFF99</color>
     <color name="light_purple">#CCCCFF</color>
     <color name="light_pink">#FF66B3</color>
     <color name="bkg_black">#2B2B2B</color>
+    <color name="bkg_transparent">#FFFFFF</color>
+    <color name="bkg_selected">#FFC4C4</color>
+    <color name="text_gray">#8D7A71</color>
+    <color name="text_yellow">#FFC800</color>
 </resources>

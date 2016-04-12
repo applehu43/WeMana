@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|center_horizontal"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/top_date_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@color/back_white">
+
+        <DatePicker
+            android:layout_width="wrap_content"
+            android:layout_height="100dip"
+            android:layout_gravity="center_horizontal"></DatePicker>
+
+    </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/texts"
+        android:layout_width="match_parent"
+        android:layout_height="61.8dip"
+        android:layout_alignParentBottom="true"
+        android:background="@color/back_white"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/text0"
+            style="@style/tab_menu_item"
+            android:drawableTop="@drawable/tab_menu_message"
+            android:text="Measure" />
+
+        <RadioButton
+            android:id="@+id/text1"
+            style="@style/tab_menu_item"
+            android:drawableTop="@drawable/tab_menu_channel1"
+            android:text="Graph" />
+
+        <RadioButton
+            android:id="@+id/text2"
+            style="@style/tab_menu_item"
+            android:drawableTop="@drawable/tab_menu_channel2"
+            android:text="List" />
+
+        <RadioButton
+            android:id="@+id/text3"
+            style="@style/tab_menu_item"
+            android:drawableTop="@drawable/tab_menu_better"
+            android:text="View" />
+
+        <RadioButton
+            android:id="@+id/text4"
+            style="@style/tab_menu_item"
+            android:drawableTop="@drawable/tab_menu_setting"
+            android:text="Settings" />
+
+    </RadioGroup>
+
+    <View
+        android:id="@+id/cursor"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_above="@+id/texts" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cursor"
+        android:layout_below="@+id/top_date_picker">
+    </android.support.v4.view.ViewPager>
+
+</RelativeLayout>

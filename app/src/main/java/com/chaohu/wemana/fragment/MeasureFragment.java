@@ -1,12 +1,14 @@
-package com.chaohu.wemana.activities;
+package com.chaohu.wemana.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,10 +20,10 @@ import com.chaohu.wemana.utils.MyDateFormatUtil;
 import java.math.BigDecimal;
 
 /**
- * @Description my weight manager app
- * Created by chaohu on 2016/3/27.
+ * Created by chaohu on 2016/3/30.
  */
-public class RecordWeightActivity extends Activity {
+public class MeasureFragment extends Fragment {
+
 
     /**
      * show weight
@@ -43,8 +45,6 @@ public class RecordWeightActivity extends Activity {
      */
     private SQLiteDatabase db;
     private DBOpenHelper myDB;
-
-
     /**
      * show
      */
@@ -54,29 +54,29 @@ public class RecordWeightActivity extends Activity {
     private final String record_date = MyDateFormatUtil.getToday();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wemana_measure);
-        mContext = getApplicationContext();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_wemana_measure, container, false);
+        mContext = getActivity().getApplicationContext();
         myDB = new DBOpenHelper(mContext, "weight.db", null, 1);
-        InitButtons();
+        InitButtons(view);
+        return view;
     }
 
-    private void InitButtons() {
-        bt[0] = (Button) findViewById(R.id.bt_0);
-        bt[1] = (Button) findViewById(R.id.bt_1);
-        bt[2] = (Button) findViewById(R.id.bt_2);
-        bt[3] = (Button) findViewById(R.id.bt_3);
-        bt[4] = (Button) findViewById(R.id.bt_4);
-        bt[5] = (Button) findViewById(R.id.bt_5);
-        bt[6] = (Button) findViewById(R.id.bt_6);
-        bt[7] = (Button) findViewById(R.id.bt_7);
-        bt[8] = (Button) findViewById(R.id.bt_8);
-        bt[9] = (Button) findViewById(R.id.bt_9);
+    private void InitButtons(View view) {
+        bt[0] = (Button) view.findViewById(R.id.bt_0);
+        bt[1] = (Button) view.findViewById(R.id.bt_1);
+        bt[2] = (Button) view.findViewById(R.id.bt_2);
+        bt[3] = (Button) view.findViewById(R.id.bt_3);
+        bt[4] = (Button) view.findViewById(R.id.bt_4);
+        bt[5] = (Button) view.findViewById(R.id.bt_5);
+        bt[6] = (Button) view.findViewById(R.id.bt_6);
+        bt[7] = (Button) view.findViewById(R.id.bt_7);
+        bt[8] = (Button) view.findViewById(R.id.bt_8);
+        bt[9] = (Button) view.findViewById(R.id.bt_9);
 
-        bt_save = (Button) findViewById(R.id.bt_save);
-        bt_reset = (Button) findViewById(R.id.bt_reset);
-        et_play = (EditText) findViewById(R.id.record_weight_show_data);
+        bt_save = (Button) view.findViewById(R.id.bt_save);
+        bt_reset = (Button) view.findViewById(R.id.bt_reset);
+        et_play = (EditText) view.findViewById(R.id.record_weight_show_data);
         showWeightOnView(str_display);
         et_play.setSelection(click_count);
 
@@ -113,8 +113,8 @@ public class RecordWeightActivity extends Activity {
             @Override
             public void onClick(View v) {
                 db = myDB.getWritableDatabase();
-
                 String[] weight_date_data = new String[]{getWeightData(str_display), record_date};
+
                 // 1.先查询有没有某一天的数据
                 Cursor cursor = DBOpenHelper.queryWeightByDate(db, new String[]{record_date});
                 if (cursor.moveToFirst()) {
@@ -128,13 +128,16 @@ public class RecordWeightActivity extends Activity {
                 }
                 Toast.makeText(mContext, "保存成功~", Toast.LENGTH_SHORT).show();
             }
+
         });
+
     }
 
     /**
      * @param sb
      * @return 只是数字的体重值
      */
+
     private String getWeightData(StringBuffer sb) {
         return sb.substring(0, 5);
     }
@@ -144,12 +147,12 @@ public class RecordWeightActivity extends Activity {
      * @descrption 展示体重值
      */
     private void showWeightOnView(StringBuffer sb) {
-        String exception = "66";
+        String target = "66";
         String data = getWeightData(sb);
-        BigDecimal bd_exc = new BigDecimal(exception);
+        BigDecimal bd_exc = new BigDecimal(target);
         BigDecimal bd_data = new BigDecimal(data);
 
-        Resources resources = getBaseContext().getResources();
+        Resources resources = getActivity().getBaseContext().getResources();
         if (bd_data.compareTo(bd_exc) == 1) {
             et_play.setTextColor(resources.getColorStateList(R.color.back_red));
         } else {
@@ -157,6 +160,4 @@ public class RecordWeightActivity extends Activity {
         }
         et_play.setText(sb);
     }
-
-
 }
