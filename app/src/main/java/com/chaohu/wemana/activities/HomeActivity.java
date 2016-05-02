@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -32,18 +33,31 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        setTitle("Weight Manager");
         setContentView(R.layout.activity_wemana_main);
 
         mAdapter = new HomeFragmentPagerAdapter(getSupportFragmentManager());
         InitTextView();
 
         mPager = (ViewPager) findViewById(R.id.vPager);
+        mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(0);
         mPager.addOnPageChangeListener(this);
 
+//        FileHelper fileHelper = new FileHelper(this.getApplicationContext());
+//        String text_val = fileHelper.readFromDataFiles("exceptWeightHeight.txt");
+//        if("fileNotFound".equals(text_val)){
+//            radioButtons[4].setSelected(true);
+//        }else{
+//            String[] result_val = text_val.split(",");
+//            new BMIDemo(new BigDecimal(result_val[0]),new BigDecimal(result_val[1]));
+//            radioButtons[0].setSelected(true);
+//        }
         radioButtons[0].setSelected(true);
-
         InitBroadcast();
 
     }
@@ -56,6 +70,8 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
                 break;
             case R.id.text1:
                 mPager.setCurrentItem(1);
+//                Intent intent = new Intent(this, WeightGraphFragment.class);
+//                startActivity(intent);
                 break;
             case R.id.text2:
                 mPager.setCurrentItem(2);
@@ -84,10 +100,10 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         if (state == 2) {
             int curItem = mPager.getCurrentItem();
-            for (int i=0; i<5; i++){
-                if(curItem == i){
+            for (int i = 0; i < 5; i++) {
+                if (curItem == i) {
                     radioButtons[i].setSelected(true);
-                }else{
+                } else {
                     radioButtons[i].setSelected(false);
                 }
             }
@@ -112,36 +128,36 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     /**
      * 广播
-     * */
-    private void InitBroadcast(){
+     */
+    private void InitBroadcast() {
         broadcastReceiver = new MyBroadcastReceiver();
         IntentFilter itf = new IntentFilter();
         itf.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        registerReceiver(broadcastReceiver,itf);
+        registerReceiver(broadcastReceiver, itf);
     }
 
     private long lastedTime = 0;
+
     /**
-     * @description 双击退出程序
      * @param keyCode
      * @param event
      * @return
+     * @description 双击退出程序
      */
-    public boolean onKeyDown(int keyCode, KeyEvent event){
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         long firstTime = System.currentTimeMillis();
 
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if((firstTime - lastedTime)>2000){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((firstTime - lastedTime) > 2000) {
                 Toast.makeText(getApplicationContext(), "再按一次退出应用", Toast.LENGTH_SHORT).show();
                 lastedTime = firstTime;
-            }
-            else{
+            } else {
                 this.finish();
                 System.exit(0);
             }
             return false;
         }
-        return super.onKeyDown(keyCode,event);
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

@@ -14,7 +14,7 @@ import com.chaohu.wemana.R;
 public class WeightListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_wemana_measure,container,false);
+        View view = inflater.inflate(R.layout.activity_wemana_list,container,false);
         return view;
     }
 }

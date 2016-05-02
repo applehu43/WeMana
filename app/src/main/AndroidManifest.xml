@@ -18,11 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER"></category>
             </intent-filter>
         </activity>
-        <service android:name=".service.SaveWeightServiceImpl">
-            <intent-filter>
-                <action android:name="saveWeightServiceImpl"></action>
-            </intent-filter>
-        </service>
+        <activity android:name=".activities.SimpleChartDemo"></activity>
+
         <!-- 定义Android应用的一个组件 -->
         <!--<activity-->
         <!--android:name=".activities.RecordWeightActivity"-->
@@ -34,7 +31,7 @@
         <!--<category android:name="android.intent.category.LAUNCHER" />-->
         <!--</intent-filter>-->
         <!--</activity>-->
-        <!--<activity android:name=".activities.WeManaActivity">-->
+        <!--<activity android:name=".activities.HomeActivity">-->
         <!--</activity>-->
     </application>
 

@@ -117,7 +117,7 @@ public class MeasureFragment extends Fragment {
 
                 // 1.先查询有没有某一天的数据
                 Cursor cursor = DBOpenHelper.queryWeightByDate(db, new String[]{record_date});
-                if (cursor.moveToFirst()) {
+                if (cursor ==null || cursor.moveToFirst()) {
                     // 2.有则更新の
                     db.execSQL("update weight_record set weight_data = ? where record_date = ?",
                             weight_date_data);

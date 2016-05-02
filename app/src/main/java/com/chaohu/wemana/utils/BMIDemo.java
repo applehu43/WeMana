@@ -11,7 +11,7 @@ public class BMIDemo {
         this.bodyHeight = height;
     }
 
-    public BMIDemo(double weight, double height) {
+    public BMIDemo(String weight, String height) {
         this.targetWeight = new BigDecimal(weight);
         this.bodyHeight = new BigDecimal(height);
     }
@@ -19,8 +19,8 @@ public class BMIDemo {
     /**
      * from user's settings
      */
-    private BigDecimal targetWeight = new BigDecimal("66.6");
-    private BigDecimal bodyHeight = new BigDecimal("1.72");
+    public BigDecimal targetWeight;
+    public BigDecimal bodyHeight;
 
     /*
      * the top of the separator from the as-known standard
@@ -28,19 +28,35 @@ public class BMIDemo {
     /**
      * if weight is less 18.5 then thin
      */
-    public static final BigDecimal BMI_THIN = new BigDecimal("18.5");
+    public static final BigDecimal BMI_THIN_MAX = new BigDecimal("18.5");
     /**
      * if 18.5<= weight <23.9 then normal
      */
-    public static final BigDecimal BMI_NORMAL = new BigDecimal("23.9");
+    public static final BigDecimal BMI_NORMAL_MAX = new BigDecimal("23.9");
     /**
      * if 23.9<= weight <27.9 then fat
      */
-    public static final BigDecimal BMI_FAT = new BigDecimal("27.9");
+    public static final BigDecimal BMI_FAT_MAX = new BigDecimal("27.9");
     /**
      * if weight is over 27.9 then obesity
      */
-    public static final BigDecimal BMI_OBESITY = new BigDecimal("27.9");
+    public static final BigDecimal BMI_OBESITY_MIN = new BigDecimal("27.9");
+    /**
+     * if weight is less 18.5 then thin
+     */
+    public static final String  BMI_THIN = "thin";
+    /**
+     * if 18.5<= weight <23.9 then normal
+     */
+    public static final String BMI_NORMAL = "normal";
+    /**
+     * if 23.9<= weight <27.9 then fat
+     */
+    public static final String BMI_FAT = "fat";
+    /**
+     * if weight is over 27.9 then obesity
+     */
+    public static final String BMI_OBESITY = "obesity";
 
     /**
      * 体质指数（BMI）=体重（kg）÷身高^2（m）
@@ -55,24 +71,24 @@ public class BMIDemo {
 
     public String indexOfBMI(BigDecimal bmi) {
         String index;
-        if (bmi.compareTo(BMI_THIN) == -1) {
-            index = "thin";
-        } else if (bmi.compareTo(BMI_NORMAL) == -1) {
-            index = "normal";
-        } else if (bmi.compareTo(BMI_FAT) == -1) {
-            index = "fat";
+        if (bmi.compareTo(BMI_THIN_MAX) == -1) {
+            index = BMI_THIN;
+        } else if (bmi.compareTo(BMI_NORMAL_MAX) == -1) {
+            index = BMI_NORMAL;
+        } else if (bmi.compareTo(BMI_FAT_MAX) == -1) {
+            index = BMI_FAT;
         } else {
-            index = "obesity";
+            index = BMI_OBESITY;
         }
         return index;
     }
 
     public BigDecimal calculateTopWeight() {
-        return BMI_NORMAL.multiply(getBodyHeight().multiply(getBodyHeight())).setScale(1, BigDecimal.ROUND_HALF_UP);
+        return BMI_NORMAL_MAX.multiply(getBodyHeight().multiply(getBodyHeight())).setScale(1, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal calculateBottomWeight() {
-        return BMI_THIN.multiply(getBodyHeight().multiply(getBodyHeight())).setScale(1, BigDecimal.ROUND_HALF_UP);
+        return BMI_THIN_MAX.multiply(getBodyHeight().multiply(getBodyHeight())).setScale(1, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal getTargetWeight() {

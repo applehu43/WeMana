@@ -18,7 +18,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table weight_record(" +
                 "id integer primary key autoincrement," +
-                "weight_data varchar(10),record_date int(8))");
+                "weight_data varchar(10),record_date varchar(8))");
     }
 
     @Override
@@ -30,7 +30,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         // final String table_name = "weight_record";
         // final String[] colName = new String[]{"id", "weight_data", "record_date"};
         StringBuffer sb = new StringBuffer("");
-        sb.append("select id,, weight_data, record_date");
+        sb.append("select id, weight_data, record_date");
         sb.append(" from weight_record");
         sb.append(" where record_date = ?");
         Cursor cursor = db.rawQuery(sb.toString(),date);
