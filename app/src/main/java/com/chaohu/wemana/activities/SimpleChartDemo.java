@@ -25,7 +25,7 @@ public class SimpleChartDemo extends FragmentActivity {
         
             setContentView(R.layout.activity_wemana_graph);
 
-        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        ViewPager pager = (ViewPager) findViewById(R.id.graphPager);
         pager.setOffscreenPageLimit(1);
         pagerAdapter = new ChartFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);

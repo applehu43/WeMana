@@ -1,5 +1,6 @@
 package com.chaohu.wemana.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,18 +10,42 @@ import java.util.Date;
  */
 public class MyDateFormatUtil {
     public static final String ymd = "yyyyMMdd";
+    public static final String y_m_d = "yyyy-MM-dd";
     public final static int TIME_DAY_MILLISECOND = 24 * 60 * 60 * 1000;
-
+    private static SimpleDateFormat s_d_f = new SimpleDateFormat(y_m_d);
+    private static SimpleDateFormat sdf = new SimpleDateFormat(ymd);
     /**
-     * get yyyyMMdd type date
+     * get yyyy_MM_dd type date
      *
      * @return
      */
     public static String getToday() {
-        SimpleDateFormat sdf = new SimpleDateFormat(ymd);
-        return sdf.format(new Date());
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        return s_d_f.format(cal.getTime());
     }
 
+    /**
+     * string to date
+     * @param dateStr
+     * @return
+     */
+    public static Date strToDate(String dateStr){
+        try {
+            return s_d_f.parse(dateStr);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * date to string
+     * @param date
+     * @return
+     */
+    public static String dateToStr(Date date){
+        return s_d_f.format(date);
+    }
     /**
      * get the total days of that month according to the given time
      */
@@ -42,7 +67,7 @@ public class MyDateFormatUtil {
 
         return mils.intValue();
     }
-
+    
     /**
      * 判断日期是否在当前周内
      *

@@ -1,26 +1,38 @@
 package com.chaohu.wemana.utils;
 
+import com.chaohu.wemana.model.UserData;
+
 import java.math.BigDecimal;
 
 /**
  * Created by chaohu on 2016/4/11.
  */
 public class BMIDemo {
-    public BMIDemo(BigDecimal weight, BigDecimal height) {
+    public BMIDemo(BigDecimal height, BigDecimal weight) {
         this.targetWeight = weight;
         this.bodyHeight = height;
     }
 
-    public BMIDemo(String weight, String height) {
+    public BMIDemo(String height, String weight) {
         this.targetWeight = new BigDecimal(weight);
         this.bodyHeight = new BigDecimal(height);
+    }
+
+    public BMIDemo(UserData data){
+        if(data == null){
+            this.targetWeight = null;
+            this.bodyHeight = null;
+        }else {
+            this.targetWeight = new BigDecimal(data.getWeight());
+            this.bodyHeight = new BigDecimal(data.getHeight());
+        }
     }
 
     /**
      * from user's settings
      */
-    public BigDecimal targetWeight;
-    public BigDecimal bodyHeight;
+    private BigDecimal targetWeight;
+    private BigDecimal bodyHeight;
 
     /*
      * the top of the separator from the as-known standard
@@ -44,7 +56,7 @@ public class BMIDemo {
     /**
      * if weight is less 18.5 then thin
      */
-    public static final String  BMI_THIN = "thin";
+    public static final String BMI_THIN = "thin";
     /**
      * if 18.5<= weight <23.9 then normal
      */
@@ -65,8 +77,10 @@ public class BMIDemo {
      */
     public BigDecimal calculateBMI() {
         return getTargetWeight().divide(
-                getBodyHeight().multiply(getBodyHeight()))
-                .setScale(1, BigDecimal.ROUND_HALF_UP);
+                getBodyHeight().divide(new BigDecimal(100), 2)
+                        .multiply(
+                                getBodyHeight().divide(new BigDecimal(100), 2)),
+                1, BigDecimal.ROUND_HALF_UP);
     }
 
     public String indexOfBMI(BigDecimal bmi) {
@@ -83,27 +97,24 @@ public class BMIDemo {
         return index;
     }
 
-    public BigDecimal calculateTopWeight() {
-        return BMI_NORMAL_MAX.multiply(getBodyHeight().multiply(getBodyHeight())).setScale(1, BigDecimal.ROUND_HALF_UP);
+    public BigDecimal calculateUpperWeight() {
+        return BMI_NORMAL_MAX.multiply(getBodyHeight().divide(new BigDecimal(100), 2)
+                .multiply(getBodyHeight().divide(new BigDecimal(100), 2))
+        ).setScale(1, BigDecimal.ROUND_HALF_UP);
     }
 
-    public BigDecimal calculateBottomWeight() {
-        return BMI_THIN_MAX.multiply(getBodyHeight().multiply(getBodyHeight())).setScale(1, BigDecimal.ROUND_HALF_UP);
+    public BigDecimal calculateLowerWeight() {
+        return BMI_THIN_MAX.multiply(getBodyHeight().divide(new BigDecimal(100), 2)
+                .multiply(getBodyHeight().divide(new BigDecimal(100), 2))
+        ).setScale(1, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal getTargetWeight() {
         return targetWeight.setScale(1, BigDecimal.ROUND_HALF_UP);
     }
 
-    public void setTargetWeight(BigDecimal targetWeight) {
-        this.targetWeight = targetWeight;
-    }
-
     public BigDecimal getBodyHeight() {
         return bodyHeight.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
-    public void setBodyHeight(BigDecimal bodyHeight) {
-        this.bodyHeight = bodyHeight;
-    }
 }

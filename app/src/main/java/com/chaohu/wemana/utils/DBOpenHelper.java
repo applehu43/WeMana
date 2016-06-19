@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.chaohu.wemana.model.DBColumn;
+
 /**
  * Created by chaohu on 2016/4/5.
  */
@@ -27,12 +29,12 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     }
 
     public static Cursor queryWeightByDate(SQLiteDatabase db, String[] date){
-        // final String table_name = "weight_record";
-        // final String[] colName = new String[]{"id", "weight_data", "record_date"};
         StringBuffer sb = new StringBuffer("");
-        sb.append("select id, weight_data, record_date");
-        sb.append(" from weight_record");
-        sb.append(" where record_date = ?");
+        sb.append(DBColumn.select_sql);
+        sb.append(DBColumn.from_sql);
+        sb.append(" where ");
+        sb.append(DBColumn.record_date);
+        sb.append(" = ?");
         Cursor cursor = db.rawQuery(sb.toString(),date);
         return cursor;
     }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <RadioGroup
+        android:id="@+id/setting_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="68.8dip"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/shape_small_corner"
+        android:layout_margin="@dimen/my_luck_size"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/set_save_button"
+            style="@style/tab_menu_item"
+            android:textSize="@dimen/number_button_text_size"
+            android:drawableTop="@drawable/tab_menu_channel2"
+            android:text="save" />
+
+        <RadioButton
+            android:id="@+id/set_reset_button"
+            style="@style/tab_menu_item"
+            android:textSize="@dimen/number_button_text_size"
+            android:drawableTop="@drawable/tab_menu_channel1"
+            android:text="edit" />
+
+    </RadioGroup>
+
+</RelativeLayout>

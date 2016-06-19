@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.chaohu.wemana.model.UserData;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,6 +16,8 @@ import java.io.IOException;
  * Created by chaohu on 2016/4/4.
  */
 public class FileHelper {
+    // 文件保存数据顺序是 身高(CM),体重(KG)
+    public static final String TXT_NAME = "exceptWeightHeight.txt";
     private Context mContext;
 
     public FileHelper() {
@@ -121,5 +125,17 @@ public class FileHelper {
             }
         }
         return sb.toString();
+    }
+
+    public UserData heightAndWeight(){
+        String txt_value = readFromSD(TXT_NAME);
+        String[] values = txt_value.split(",");
+        if (values.length != 2){
+            return null;
+        }
+        UserData info = new UserData();
+        info.setHeight(values[0]);
+        info.setWeight(values[1]);
+        return info;
     }
 }

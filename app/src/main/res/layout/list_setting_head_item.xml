@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:padding="1dp">
+
+    <FrameLayout
+        android:id="@+id/setting_bmi"
+        android:layout_width="match_parent"
+        android:layout_height="168.8dip"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/my_luck_size"
+        android:background="@drawable/shape_round_corner"
+        android:layout_marginBottom="@dimen/my_luck_size">
+
+        <TextView
+            android:id="@+id/bmi_bmi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="26dp"
+            android:gravity="center_vertical|right"
+            android:text="BMI"
+            android:textSize="32sp"
+            android:layout_marginTop="50dp" />
+
+        <TextView
+            android:id="@+id/bmi_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="140dp"
+            android:gravity="left|center_vertical"
+            android:textSize="32sp"
+            android:layout_marginTop="50dp" />
+
+
+        <TextView
+            android:id="@+id/bmi_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="26dp"
+            android:gravity="center_vertical|right"
+            android:textSize="@dimen/number_button_text_size"
+            android:layout_marginTop="100dp" />
+
+        <TextView
+            android:id="@+id/bmi_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="140dp"
+            android:gravity="left|center_vertical"
+            android:textSize="@dimen/number_button_text_size"
+            android:text="kg/m^2"
+            android:layout_marginTop="100dp" />
+
+    </FrameLayout>
+
+</RelativeLayout>

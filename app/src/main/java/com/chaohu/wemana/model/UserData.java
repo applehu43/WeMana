@@ -1,7 +1,5 @@
 package com.chaohu.wemana.model;
 
-import com.chaohu.wemana.utils.BMIDemo;
-
 /**
  * Created by chaohu on 2016/4/24.
  */
@@ -33,11 +31,6 @@ public class UserData {
 
     public void setSex(int sex) {
         this.sex = sex;
-    }
-
-    public String caculateBMI() {
-        BMIDemo bmi = new BMIDemo(getWeight(),getHeight());
-        return bmi.indexOfBMI(bmi.calculateBMI());
     }
 
 }

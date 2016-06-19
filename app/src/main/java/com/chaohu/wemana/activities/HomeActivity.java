@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.chaohu.wemana.R;
 import com.chaohu.wemana.adapter.HomeFragmentPagerAdapter;
 import com.chaohu.wemana.broadcast.MyBroadcastReceiver;
+import com.chaohu.wemana.utils.FileHelper;
 
 /**
  * Created by chaohu on 2016/3/29.
@@ -43,22 +44,24 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
         InitTextView();
 
         mPager = (ViewPager) findViewById(R.id.vPager);
-        mPager.setOffscreenPageLimit(2);
+        mPager.setOffscreenPageLimit(4);
         mPager.setAdapter(mAdapter);
-        mPager.setCurrentItem(0);
+
         mPager.addOnPageChangeListener(this);
 
-//        FileHelper fileHelper = new FileHelper(this.getApplicationContext());
+        FileHelper fileHelper = new FileHelper(this.getApplicationContext());
+        String text_val = fileHelper.readFromSD("exceptWeightHeight.txt");
 //        String text_val = fileHelper.readFromDataFiles("exceptWeightHeight.txt");
-//        if("fileNotFound".equals(text_val)){
-//            radioButtons[4].setSelected(true);
-//        }else{
+        if("fileNotFound".equals(text_val)){
+            mPager.setCurrentItem(4);
+            radioButtons[4].setSelected(true);
+        }else{
 //            String[] result_val = text_val.split(",");
 //            new BMIDemo(new BigDecimal(result_val[0]),new BigDecimal(result_val[1]));
-//            radioButtons[0].setSelected(true);
-//        }
-        radioButtons[0].setSelected(true);
-        InitBroadcast();
+            mPager.setCurrentItem(0);
+            radioButtons[0].setSelected(true);
+        }
+//        InitBroadcast();
 
     }
 
@@ -163,6 +166,6 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
+//        unregisterReceiver(broadcastReceiver);
     }
 }

@@ -11,4 +11,5 @@
     <dimen name="button_separator_line_width">2.45dp</dimen>
     <dimen name="text_view_size">20dp</dimen>
     <dimen name="text_button_view_size">18dp</dimen>
+    <dimen name="my_luck_size">43dp</dimen>
 </resources>

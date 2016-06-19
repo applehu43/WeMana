@@ -15,4 +15,5 @@
     <color name="bkg_selected">#FFC4C4</color>
     <color name="text_gray">#8D7A71</color>
     <color name="text_yellow">#FFC800</color>
+    <color name="bkg_blue">#43BBEB</color>
 </resources>
