@@ -53,6 +53,8 @@ public class SettingListAdapter extends ArrayAdapter<SettingInfo> {
         holder.getSettingData().setText(sm.getText());
         holder.getSettingUnit().setText(sm.getUnit());
 
+//        this.notifyDataSetChanged();
+
         return convertView;
     }
 

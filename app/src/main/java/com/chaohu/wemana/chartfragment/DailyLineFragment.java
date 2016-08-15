@@ -14,44 +14,58 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 
 
-public class SineCosineFragment extends BaseGraphFragment {
+public class DailyLineFragment extends BaseGraphFragment {
 
     public static Fragment newInstance() {
-        return new SineCosineFragment();
+        return new DailyLineFragment();
     }
 
     private LineChart mChart;
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.frag_simple_line, container, false);
 
         mChart = (LineChart) v.findViewById(R.id.lineChart1);
+        // enable scaling and dragging
+        mChart.setDrawGridBackground(false);
+        mChart.setScaleEnabled(true);
 
         mChart.setDescription("");
+        mChart.setNoDataTextDescription("go recording");
+        if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0){
+            mChart.notifyDataSetChanged();
+            mChart.invalidate();
+        }
+            mChart.setData(generateLineData(31));
 
-        mChart.setDrawGridBackground(false);
 
-        mChart.setData(generateLineData());
+        // 水平轴的图表值动画
         mChart.animateX(3000);
 
         Typeface tf = Typeface.createFromAsset(getActivity().getAssets(),"OpenSans-Regular.ttf");
 
         Legend l = mChart.getLegend();
-        l.setTypeface(tf);
+        l.setForm(Legend.LegendForm.CIRCLE);
 
         YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.removeAllLimitLines();
+        leftAxis.setDrawGridLines(false);
         leftAxis.setTypeface(tf);
-        leftAxis.setAxisMaxValue(1.2f);
-        leftAxis.setAxisMinValue(-1.2f);
+        leftAxis.setTextSize(10f);
+        // 设置上下限和上下线
+        addUpperLower(mChart.getLineData().getYMax(),leftAxis);
+
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setTypeface(tf);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setLabelsToSkip(2);
+        xAxis.setTextSize(8f);
 
         mChart.getAxisRight().setEnabled(false);
 
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setEnabled(false);
-
-        addUpperLower();
-        
         return v;
     }
 }

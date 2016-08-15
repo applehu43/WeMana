@@ -40,7 +40,6 @@ public class SettingsFragment extends Fragment {
         FileHelper fileHelper = new FileHelper(getActivity().getApplicationContext());
         String text_val = fileHelper.readFromSD(FileHelper.TXT_NAME);
         String[] result_val = text_val.split(",");
-//        String text_val = fileHelper.readFromDataFiles(FileHelper.TXT_NAME);
         if (result_val.length != 2) {
             SettingInfo setInfo = new SettingInfo();
             setInfo.setName("height");
@@ -115,6 +114,8 @@ public class SettingsFragment extends Fragment {
                 FileHelper fileHelper = new FileHelper(getActivity().getApplicationContext());
                 String saveResult = fileHelper.saveDataToSD(FileHelper.TXT_NAME, sb.substring(0, sb.length() - 1));
                 if ("OK".equals(saveResult)) {
+                    editText.setFocusable(false);
+                    editText.setClickable(false);
                     Toast.makeText(getActivity().getApplicationContext(), "save success~", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "save fail...", Toast.LENGTH_SHORT).show();

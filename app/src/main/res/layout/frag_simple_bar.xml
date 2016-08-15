@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/lineChart1"
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart1"
         android:layout_marginTop="@dimen/my_luck_size"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

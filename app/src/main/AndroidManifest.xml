@@ -5,7 +5,7 @@
     <!--original logo android:icon="@mipmap/ic_launcher"-->
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/logo_test1"
+        android:icon="@mipmap/wmlogo2"
 
         android:label="@string/app_name"
         android:theme="@style/AppTheme">

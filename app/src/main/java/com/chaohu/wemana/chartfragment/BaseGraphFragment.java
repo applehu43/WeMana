@@ -1,6 +1,8 @@
 package com.chaohu.wemana.chartfragment;
 
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,40 +10,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chaohu.wemana.model.DBColumn;
 import com.chaohu.wemana.model.UserData;
 import com.chaohu.wemana.utils.BMIDemo;
+import com.chaohu.wemana.utils.DBOpenHelper;
 import com.chaohu.wemana.utils.FileHelper;
-import com.github.mikephil.charting.charts.ScatterChart;
+import com.chaohu.wemana.utils.MyDateFormatUtil;
 import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.ScatterData;
-import com.github.mikephil.charting.data.ScatterDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.FileUtils;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by chaohu on 2016/5/8.
  */
 public class BaseGraphFragment extends Fragment {
+
     private Typeface tf;
-
-    public String[] mLabels = new String[] { "Company A", "Company B", "Company C", "Company D", "Company E", "Company F" };
-//    private String[] mXVals = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec" };
-
-    private String getLabel(int i) {
-        return mLabels[i];
-    }
+    /**
+     * database
+     */
+    private DBOpenHelper myDB;
 
     public BaseGraphFragment() {
 
@@ -50,153 +52,185 @@ public class BaseGraphFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         tf = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Regular.ttf");
-
+//        myDB = new DBOpenHelper(getContext(), DBColumn.db_name, null, 1);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    protected void addUpperLower(){
+    protected void addUpperLower(float max, YAxis leftAxis) {
         UserData userData = new FileHelper().heightAndWeight();
-        BMIDemo demo = new BMIDemo(userData);
+        BMIDemo demo;
+        BigDecimal target;
+        if(userData != null){
+            demo = new BMIDemo(userData);
+            target = new BigDecimal(userData.getWeight());
+        }else{
+            demo = new BMIDemo(BigDecimal.valueOf(175),BigDecimal.valueOf(60));
+            target = BigDecimal.valueOf(60);
+        }
+        String[] names = {"Upper","Target","Lower"};
+        BigDecimal BD_TWO = BigDecimal.valueOf(2);
 
-        LimitLine ll1 = new LimitLine(demo.calculateUpperWeight().floatValue(), "Upper");
-        ll1.setLineWidth(4f);
+        BigDecimal upper = demo.calculateUpperWeight();
+
+        BigDecimal lower = demo.calculateLowerWeight();
+        BigDecimal def_height = upper.subtract(lower).abs();
+
+        BigDecimal given = BigDecimal.valueOf(max);
+        BigDecimal l_upper,l_lower;
+        // 目标值(T) 标准上限(U) 标准下限(L) 标准差(S=U-L)
+        // T > U + S/2 超胖
+        if (def_height.divide(BD_TWO).compareTo(target.subtract(upper))<0){
+            // U 作为图表的起点
+            addWhichLine(l_upper = target,names[1],leftAxis);
+            addWhichLine(l_lower = upper,names[0],leftAxis);
+        }
+        // T < L - S/2 极瘦
+        else if(def_height.divide(BD_TWO).compareTo(lower.subtract(target))<0){
+            // T 作为图表的起点
+            addWhichLine(l_upper = lower,names[2],leftAxis);
+            addWhichLine(l_lower = target,names[1],leftAxis);
+        }
+        // L-S/2 <= T <= U+S/2`
+        else{
+            // L 作为图标的起点
+            addWhichLine(l_lower = lower,names[2],leftAxis);
+            addWhichLine(target,names[1],leftAxis);
+            addWhichLine(l_upper = upper,names[0],leftAxis);
+        }
+
+        // 给定数值超出图表的(S=U-L)上或下界2倍 视为无效值
+        if (def_height.multiply(BD_TWO).compareTo(given.subtract(l_lower).abs()) < 0
+                && def_height.multiply(BD_TWO).compareTo(given.subtract(l_upper).abs()) < 0){
+        }
+        else{
+            if(given.subtract(l_lower).abs().compareTo(given.subtract(l_upper).abs()) > 0){
+                l_upper = l_upper.add(BigDecimal.valueOf(3));
+            }else if (given.subtract(l_lower).abs().compareTo(given.subtract(l_upper).abs()) < 0){
+                l_lower = l_lower.subtract(BigDecimal.valueOf(3));
+            }
+
+        }
+        l_upper = l_upper.add(BigDecimal.valueOf(3));
+        l_lower = l_lower.subtract(BigDecimal.valueOf(3));
+        leftAxis.setAxisMinValue(l_lower.floatValue());
+        leftAxis.setAxisMaxValue(l_upper.floatValue());
+    }
+    private void addWhichLine(BigDecimal value, String name, YAxis leftAxis) {
+        LimitLine ll1 = new LimitLine(value.floatValue(), name);
+        ll1.setLineWidth(2f);
         ll1.enableDashedLine(10f, 10f, 0f);
         ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
         ll1.setTextSize(10f);
         ll1.setTypeface(tf);
+        leftAxis.addLimitLine(ll1);
+    }
+    protected LineData generateLineData(int day_len) {
+        // 查询30天的数据
+        String dateStr =  MyDateFormatUtil.dateList(new Date(), day_len);
 
-        LimitLine ll2 = new LimitLine(Float.valueOf(userData.getWeight()), "Target");
-//        LimitLine ll2 = new LimitLine(0.01F, "Target");
-        ll2.setLineWidth(4f);
-        ll2.enableDashedLine(10f, 10f, 0f);
-        ll2.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        ll2.setTextSize(10f);
-        ll2.setTypeface(tf);
+        myDB = new DBOpenHelper(getContext(), DBColumn.db_name, null, 1);
 
-        LimitLine ll3 = new LimitLine(demo.calculateLowerWeight().floatValue(), "Lower");
-        ll3.setLineWidth(4f);
-        ll3.enableDashedLine(10f, 10f, 0f);
-        ll3.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-        ll3.setTextSize(10f);
-        ll3.setTypeface(tf);
+//        List<ContentValues> valuelist = this.jsonToArray();
+//        DBOpenHelper.delteValues(myDB.getWritableDatabase());
+//        DBOpenHelper.insertInto(myDB.getWritableDatabase(),valuelist);
+
+        Cursor cursor = DBOpenHelper.queryWeightByDate(myDB.getReadableDatabase(),dateStr.split(","));
+
+        ArrayList<String> xdate = new ArrayList<String>();
+        ArrayList<Entry> yweight = new ArrayList<Entry>();
+        int i = 0;
+        int len = cursor.getCount();
+        while (cursor.moveToNext()){
+            if (i == len-1){
+                xdate.add("today");
+            }else {
+                xdate.add(""+ (len - i - 1));
+            }
+            Entry ds2 = new Entry(keep2scale(cursor.getFloat(cursor.getColumnIndex(DBColumn.weight_data))),++i);
+//            xdate.add(cursor.getString(cursor.getColumnIndex(DBColumn.record_date)).substring(5,10));
+            yweight.add(ds2);
+        }
+        LineDataSet xlds = new LineDataSet(yweight, "last "+day_len+" days' weight");
+        xlds.setLineWidth(2f);
+        xlds.setDrawCircles(false);
+        xlds.setDrawValues(false);
+        xlds.setColor(ColorTemplate.VORDIPLOM_COLORS[1]);
+        LineData d = new LineData(xdate, xlds);
+        d.setValueTypeface(tf);
+        return d;
     }
 
-    protected BarData generateBarData(int dataSets, float range, int count) {
-
+    protected BarData generateMonthBarData(int month_len){
+        myDB = new DBOpenHelper(getContext(), DBColumn.db_name, null, 1);
         ArrayList<IBarDataSet> sets = new ArrayList<IBarDataSet>();
-
-        for(int i = 0; i < dataSets; i++) {
-
-            ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
-
-//            entries = FileUtils.loadEntriesFromAssets(getActivity().getAssets(), "stacked_bars.txt");
-
-            for(int j = 0; j < count; j++) {
-                entries.add(new BarEntry((float) (Math.random() * range) + range / 4, j));
-            }
-
-            BarDataSet ds = new BarDataSet(entries, getLabel(i));
-            ds.setColors(ColorTemplate.VORDIPLOM_COLORS);
-            sets.add(ds);
+        ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
+        ArrayList<String> xvals = new ArrayList<String>();
+        Cursor cursor = DBOpenHelper.queryAvgWeightMonthly(myDB.getReadableDatabase());
+        int last = cursor.getCount();
+        int k = 0;
+        cursor.moveToLast();
+        while (cursor.moveToPrevious()) {
+            entries.add(new BarEntry(keep2scale(cursor.getFloat(cursor.getColumnIndex("avg_weight_data")))
+                    , k++));
+            xvals.add(cursor.getString(cursor.getColumnIndex("record_month")));
+            if (k >= month_len)
+                break;
         }
-
-        BarData d = new BarData(ChartData.generateXVals(0, count), sets);
+        BarDataSet ds = new BarDataSet(entries,"the last "+xvals.size()+" months' weight");
+        ds.setBarSpacePercent(33);
+        sets.add(ds);
+        BarData d = new BarData(xvals, sets);
         d.setValueTypeface(tf);
         return d;
     }
+    protected BarData generateWeekBarData(int week_len) {
+        // 查询10周的数据
+        String dateStr=MyDateFormatUtil.dateList(new Date(), 7 * week_len);
+        String[] dates = dateStr.split(",");
+        myDB = new DBOpenHelper(getContext(), DBColumn.db_name, null, 1);
+        ArrayList<IBarDataSet> sets = new ArrayList<IBarDataSet>();
+        ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
+        ArrayList<String> xvals = new ArrayList<String>();
+        for (int k=0; k<week_len; k++) {
 
-    protected ScatterData generateScatterData(int dataSets, float range, int count) {
-
-        ArrayList<IScatterDataSet> sets = new ArrayList<IScatterDataSet>();
-
-        ScatterChart.ScatterShape[] shapes = ScatterChart.getAllPossibleShapes();
-
-        for(int i = 0; i < dataSets; i++) {
-
-            ArrayList<Entry> entries = new ArrayList<Entry>();
-
-            for(int j = 0; j < count; j++) {
-                entries.add(new Entry((float) (Math.random() * range) + range / 4, j));
+            String[] weekdate = new String[7];
+            System.arraycopy(dates, 7 * (week_len - k - 1), weekdate,0,7);
+            xvals.add((week_len-k)+"周");
+            Cursor cursor = DBOpenHelper.queryAvgWeightByDate(myDB.getReadableDatabase(), weekdate);
+            while (cursor.moveToNext()) {
+                entries.add(new BarEntry(keep2scale(cursor.getFloat(cursor.getColumnIndex("avg_weight_data")))
+                        , k));
             }
-
-            ScatterDataSet ds = new ScatterDataSet(entries, getLabel(i));
-            ds.setScatterShapeSize(12f);
-            ds.setScatterShape(shapes[i % shapes.length]);
-            ds.setColors(ColorTemplate.COLORFUL_COLORS);
-            ds.setScatterShapeSize(9f);
-            sets.add(ds);
         }
-
-        ScatterData d = new ScatterData(ChartData.generateXVals(0, count), sets);
+        BarDataSet ds = new BarDataSet(entries,"the last "+week_len+" weeks' weight");
+        ds.setBarSpacePercent(33);
+        sets.add(ds);
+        BarData d = new BarData(xvals, sets);
         d.setValueTypeface(tf);
         return d;
     }
 
-    protected LineData generateLineData() {
+    private static List<ContentValues> jsonToArray() {
+        int length = 333;
+        double baseWeight = 65.58D;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calNext = Calendar.getInstance();
+        calNext.setTime(new Date());
 
-        ArrayList<ILineDataSet> sets = new ArrayList<ILineDataSet>();
-
-        LineDataSet ds1 = new LineDataSet(FileUtils.loadEntriesFromAssets(getActivity().getAssets(), "sine.txt"), "Sine function");
-        LineDataSet ds2 = new LineDataSet(FileUtils.loadEntriesFromAssets(getActivity().getAssets(), "cosine.txt"), "Cosine function");
-
-        ds1.setLineWidth(2f);
-        ds2.setLineWidth(2f);
-
-        ds1.setDrawCircles(false);
-        ds2.setDrawCircles(false);
-
-        ds1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-        ds2.setColor(ColorTemplate.VORDIPLOM_COLORS[1]);
-
-        sets.add(ds1);
-        sets.add(ds2);
-
-
-        int max = Math.max(sets.get(0).getEntryCount(), sets.get(1).getEntryCount());
-
-        LineData d = new LineData(ChartData.generateXVals(0, max),  sets);
-        d.setValueTypeface(tf);
-        return d;
+        List<ContentValues> list = new ArrayList<>();
+        for (int i=1; i<=length; i++){
+            ContentValues content = new ContentValues();
+            content.put("weight_data","0"+BigDecimal.valueOf(Math.random()*4.62 + baseWeight)
+                    .setScale(1,BigDecimal.ROUND_HALF_UP).toString());
+            content.put("record_date",sdf.format(calNext.getTime()));
+            list.add(content);
+            calNext.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        return list;
     }
 
-    protected LineData getComplexity() {
-
-        ArrayList<ILineDataSet> sets = new ArrayList<ILineDataSet>();
-
-        LineDataSet ds1 = new LineDataSet(FileUtils.loadEntriesFromAssets(getActivity().getAssets(), "n.txt"), "O(n)");
-        LineDataSet ds2 = new LineDataSet(FileUtils.loadEntriesFromAssets(getActivity().getAssets(), "nlogn.txt"), "O(nlogn)");
-        LineDataSet ds3 = new LineDataSet(FileUtils.loadEntriesFromAssets(getActivity().getAssets(), "square.txt"), "O(n\u00B2)");
-        LineDataSet ds4 = new LineDataSet(FileUtils.loadEntriesFromAssets(getActivity().getAssets(), "three.txt"), "O(n\u00B3)");
-
-        ds1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-        ds2.setColor(ColorTemplate.VORDIPLOM_COLORS[1]);
-        ds3.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
-        ds4.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
-
-        ds1.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-        ds2.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[1]);
-        ds3.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[2]);
-        ds4.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[3]);
-
-        ds1.setLineWidth(2.5f);
-        ds1.setCircleRadius(3f);
-        ds2.setLineWidth(2.5f);
-        ds2.setCircleRadius(3f);
-        ds3.setLineWidth(2.5f);
-        ds3.setCircleRadius(3f);
-        ds4.setLineWidth(2.5f);
-        ds4.setCircleRadius(3f);
-
-
-        // load DataSets from textfiles in assets folders
-        sets.add(ds1);
-        sets.add(ds2);
-        sets.add(ds3);
-        sets.add(ds4);
-
-        LineData d = new LineData(ChartData.generateXVals(0, ds1.getEntryCount()), sets);
-        d.setValueTypeface(tf);
-        return d;
+    private static float keep2scale(float f){
+        return BigDecimal.valueOf(f).setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
     }
 
 }

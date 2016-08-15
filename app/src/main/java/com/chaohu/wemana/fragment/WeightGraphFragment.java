@@ -40,7 +40,7 @@ public class WeightGraphFragment extends Fragment implements RadioGroup.OnChecke
         adapter = new ChartFragmentPagerAdapter(getFragmentManager());
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(0);
-        mPager.setOffscreenPageLimit(2);
+        mPager.setOffscreenPageLimit(3);
         mPager.addOnPageChangeListener(this);
         radioButtons[0].setSelected(true);
         return view;
@@ -68,7 +68,7 @@ public class WeightGraphFragment extends Fragment implements RadioGroup.OnChecke
 
     @Override
     public void onPageSelected(int position) {
-
+        radioButtons[position].setSelected(true);
     }
 
     @Override

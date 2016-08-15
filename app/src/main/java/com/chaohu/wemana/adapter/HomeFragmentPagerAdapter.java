@@ -9,19 +9,17 @@ import com.chaohu.wemana.fragment.MeasureFragment;
 import com.chaohu.wemana.fragment.SettingsFragment;
 import com.chaohu.wemana.fragment.WeightGraphFragment;
 import com.chaohu.wemana.fragment.WeightListFragment;
-import com.chaohu.wemana.fragment.WeightViewFragment;
 
 /**
  * Created by chaohu on 2016/3/30.
  */
 public class HomeFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private final int PAGER_COUNT = 5;
+    private final int PAGER_COUNT = 4;
 
     private MeasureFragment measureFragment = null;
     private WeightGraphFragment graphFragment = null;
     private WeightListFragment listFragment = null;
-    private WeightViewFragment viewFragment = null;
     private SettingsFragment settingsFragment = null;
 
     public HomeFragmentPagerAdapter(FragmentManager fm) {
@@ -29,7 +27,6 @@ public class HomeFragmentPagerAdapter extends FragmentPagerAdapter {
         measureFragment = new MeasureFragment();
         graphFragment = new WeightGraphFragment();
         listFragment = new WeightListFragment();
-        viewFragment = new WeightViewFragment();
         settingsFragment = new SettingsFragment();
     }
 
@@ -47,9 +44,6 @@ public class HomeFragmentPagerAdapter extends FragmentPagerAdapter {
                 fragment = listFragment;
                 break;
             case 3:
-                fragment = viewFragment;
-                break;
-            case 4:
                 fragment = settingsFragment;
                 break;
         }

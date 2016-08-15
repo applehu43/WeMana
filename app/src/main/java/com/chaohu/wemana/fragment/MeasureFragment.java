@@ -27,7 +27,6 @@ import com.chaohu.wemana.utils.MyDateFormatUtil;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by chaohu on 2016/3/30.
@@ -56,7 +55,6 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
     /**
      * database
      */
-    private SQLiteDatabase db;
     private DBOpenHelper myDB;
     /**
      * show
@@ -97,6 +95,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     record_date = String.format("%d-%02d-%02d", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth());
+                    showWeightOnView(queryWeightByDate(record_date));
                     date_picker.setText(record_date);
                     dialog.cancel();
                 }
@@ -129,43 +128,38 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
         et_play = (EditText) view.findViewById(R.id.record_weight_show_data);
         // 展示日期 数值
         date_picker.setText(record_date);
-        showWeightOnView(queryWeightByDate(record_date));
+        String queryRes = queryWeightByDate(record_date);
+        showWeightOnView(queryRes);
         et_play.setSelection(click_count);
 
-        for (int i = 0; i < 10; i++) {
-            final String index = String.valueOf(i);
-            bt[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int cursor_num = et_play.getSelectionStart();
-                    if ('.' == str_display.charAt(cursor_num)) {
-                        et_play.setSelection(++cursor_num);
-                    }
-                    str_display.replace(cursor_num, cursor_num + 1, index);
-                    showWeightOnView(str_display.toString());
-                    if (click_count >= 3) {
-                        click_count = -1;
-                    }
-                    et_play.setSelection(++click_count);
-                }
-            });
+        // 曾经保存过的数据 必须通过reset按钮修改
+        if (getWeightData(original_value).equals(queryRes)) {
+            initNumButton();
         }
 
         bt_add_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar cal = Calendar.getInstance();
+                Calendar now = Calendar.getInstance();
                 cal.setTime(MyDateFormatUtil.strToDate(record_date));
+                now.setTimeInMillis(System.currentTimeMillis());
                 cal.add(Calendar.DAY_OF_MONTH, 1);
-                int flag = MyDateFormatUtil.getDaysBetweenDates(new Date(), cal.getTime());
-                if (flag > 0) {
-                    Toast.makeText(mContext, "不能查看明天的数据~", Toast.LENGTH_SHORT).show();
+                if (cal.after(now)) {
+                    Toast.makeText(mContext, "活在当下~", Toast.LENGTH_SHORT).show();
                     record_date = MyDateFormatUtil.getToday();
                 }else{
                     record_date = MyDateFormatUtil.dateToStr(cal.getTime());
                 }
                 date_picker.setText(record_date);
-                showWeightOnView(queryWeightByDate(record_date));
+                String queryRes = queryWeightByDate(record_date);
+                showWeightOnView(queryRes);
+                // 曾经保存过的数据 必须通过reset按钮修改
+                if (getWeightData(original_value).equals(queryRes)) {
+                    initNumButton();
+                }else{
+                    disableOnclickNumButton();
+                }
             }
         });
         bt_sub_date.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +170,14 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 cal.add(Calendar.DAY_OF_MONTH, -1);
                 record_date = MyDateFormatUtil.dateToStr(cal.getTime());
                 date_picker.setText(record_date);
-                showWeightOnView(queryWeightByDate(record_date));
+                String queryRes = queryWeightByDate(record_date);
+                showWeightOnView(queryRes);
+                // 曾经保存过的数据 必须通过reset按钮修改
+                if (getWeightData(original_value).equals(queryRes)) {
+                    initNumButton();
+                }else {
+                    disableOnclickNumButton();
+                }
             }
         });
 
@@ -185,7 +186,8 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
             public void onClick(View v) {
                 str_display = new StringBuffer(original_value);
                 showWeightOnView(str_display.toString());
-                et_play.setSelection(click_count = 0);
+                et_play.setSelection(click_count = 1);
+                initNumButton();
             }
         });
 
@@ -193,23 +195,24 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
         bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db = myDB.getWritableDatabase();
+                SQLiteDatabase db = myDB.getWritableDatabase();
                 String[] weight_date_data = new String[]{getWeightData(str_display.toString()), record_date};
 
                 // 1.先查询有没有某一天的数据
                 Cursor cursor = DBOpenHelper.queryWeightByDate(db, new String[]{record_date});
                 if (cursor == null || cursor.moveToFirst()) {
                     // 2.有则更新の
-                    db.execSQL("update "+DBColumn.table_name+" set "+DBColumn.weight_data+" = ? where "+DBColumn.record_date+" = ?",
-                            weight_date_data);
+                    DBOpenHelper.updateWM(db,weight_date_data);
                 } else {
                     // 3.没有就直接插入
-                    db.execSQL("insert into weight_record("+DBColumn.sql_noid+") " +
-                            "values (?,?)", weight_date_data);
+                    DBOpenHelper.insertWM(db,weight_date_data);
                 }
                 str_display = new StringBuffer(original_value);
                 showWeightOnView(queryWeightByDate(record_date));
+                // 保存完后 取消按键的输入
+                disableOnclickNumButton();
                 Toast.makeText(mContext, "保存成功~", Toast.LENGTH_SHORT).show();
+
             }
 
         });
@@ -222,7 +225,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
      * @return
      */
     private String queryWeightByDate(String givenDay){
-        String weight = original_value;
+        String weight = getWeightData(original_value);
         Cursor result = DBOpenHelper.queryWeightByDate(myDB.getReadableDatabase(), new String[]{givenDay});
         if(result != null && result.moveToFirst()){
             weight = result.getString(result.getColumnIndex(DBColumn.weight_data));
@@ -256,5 +259,36 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
             et_play.setTextColor(resources.getColorStateList(R.color.light_blue));
         }
         et_play.setText(data+"    KG");
+    }
+
+    private void initNumButton(){
+        for (int i = 0; i < 10; i++) {
+            final String index = String.valueOf(i);
+            bt[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int cursor_num = et_play.getSelectionStart();
+                    if ('.' == str_display.charAt(cursor_num)) {
+                        et_play.setSelection(++cursor_num);
+                    }
+                    str_display.replace(cursor_num, cursor_num + 1, index);
+                    showWeightOnView(str_display.toString());
+                    if (click_count >= 3) {
+                        click_count = -1;
+                    }
+                    et_play.setSelection(++click_count);
+                }
+            });
+        }
+    }
+    private void disableOnclickNumButton(){
+        for (int i = 0; i < 10; i++) {
+            bt[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    return;
+                }
+            });
+        }
     }
 }

@@ -3,7 +3,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-    </style>
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowTitleBackgroundStyle">@color/back_black</item>
+        <item name="android:windowBackground">@drawable/app_start_bgd</item>
+        <!--<item name="android:windowTitleStyle">@style/WindowTitle</item>-->
+    </style>s
 
     <style name="tab_menu_item">
         <item name="android:layout_width">0dp</item>
@@ -16,6 +20,15 @@
         <item name="android:textColor">@drawable/tab_menu_text</item>
         <item name="android:textSize">18sp</item>
     </style>
+
+    <!--<style name="WindowTitle">-->
+        <!--<item name="android:windowTitleSize">18dip</item>-->
+        <!--<item name="android:height">19dip</item>-->
+        <!--<item name="android:singleLine">true</item>-->
+        <!--<item name="android:textColor">@color/back_white</item>-->
+        <!--<item name="android:layout_marginTop">1px</item>-->
+        <!--<item name="android:layout_marginBottom">2dip</item>-->
+    <!--</style>-->
 
     <style name="symbol_item">
         <item name="android:layout_width">0dp</item>

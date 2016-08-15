@@ -77,9 +77,9 @@ public class BMIDemo {
      */
     public BigDecimal calculateBMI() {
         return getTargetWeight().divide(
-                getBodyHeight().divide(new BigDecimal(100), 2)
+                getBodyHeight().divide(BigDecimal.valueOf(100), 2)
                         .multiply(
-                                getBodyHeight().divide(new BigDecimal(100), 2)),
+                                getBodyHeight().divide(BigDecimal.valueOf(100), 2)),
                 1, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -97,16 +97,24 @@ public class BMIDemo {
         return index;
     }
 
+    /**
+     * 23.9*身高(米)的平方
+     * @return
+     */
     public BigDecimal calculateUpperWeight() {
-        return BMI_NORMAL_MAX.multiply(getBodyHeight().divide(new BigDecimal(100), 2)
-                .multiply(getBodyHeight().divide(new BigDecimal(100), 2))
-        ).setScale(1, BigDecimal.ROUND_HALF_UP);
+        return BMI_NORMAL_MAX.multiply(getBodyHeight().divide(BigDecimal.valueOf(100), 2)
+                .multiply(getBodyHeight().divide(BigDecimal.valueOf(100), 2))
+        ).setScale(1, BigDecimal.ROUND_UP);
     }
 
+    /**
+     * 18.5*身高(米)的平方
+     * @return
+     */
     public BigDecimal calculateLowerWeight() {
-        return BMI_THIN_MAX.multiply(getBodyHeight().divide(new BigDecimal(100), 2)
-                .multiply(getBodyHeight().divide(new BigDecimal(100), 2))
-        ).setScale(1, BigDecimal.ROUND_HALF_UP);
+        return BMI_THIN_MAX.multiply(getBodyHeight().divide(BigDecimal.valueOf(100), 2)
+                .multiply(getBodyHeight().divide(BigDecimal.valueOf(100), 2))
+        ).setScale(1, BigDecimal.ROUND_DOWN);
     }
 
     public BigDecimal getTargetWeight() {

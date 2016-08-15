@@ -6,6 +6,19 @@
     android:gravity="center|center_horizontal"
     android:orientation="vertical">
 
+    <!--<TextView android:id="@+id/header_text"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="manager your weight"-->
+        <!--android:textSize="12sp"-->
+        <!--android:textStyle="bold"-->
+        <!--android:textColor="#FFFFFF"-->
+        <!--android:background="@color/bkg_black"-->
+        <!--android:gravity="left"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:singleLine="true" />-->
+
     <RelativeLayout
         android:id="@+id/top_date_picker"
         android:layout_width="match_parent"
@@ -32,7 +45,7 @@
         <RadioButton
             android:id="@+id/text1"
             style="@style/tab_menu_item"
-            android:drawableTop="@drawable/tab_menu_channel1"
+            android:drawableTop="@drawable/tab_menu_better"
             android:text="Graph" />
 
         <RadioButton
@@ -43,12 +56,6 @@
 
         <RadioButton
             android:id="@+id/text3"
-            style="@style/tab_menu_item"
-            android:drawableTop="@drawable/tab_menu_better"
-            android:text="View" />
-
-        <RadioButton
-            android:id="@+id/text4"
             style="@style/tab_menu_item"
             android:drawableTop="@drawable/tab_menu_setting"
             android:text="Settings" />

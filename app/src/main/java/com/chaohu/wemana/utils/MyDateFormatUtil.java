@@ -9,11 +9,11 @@ import java.util.Date;
  * Created by chaohu on 2016/4/7.
  */
 public class MyDateFormatUtil {
-    public static final String ymd = "yyyyMMdd";
     public static final String y_m_d = "yyyy-MM-dd";
+    public static final String y_m = "yyyy-MM";
     public final static int TIME_DAY_MILLISECOND = 24 * 60 * 60 * 1000;
     private static SimpleDateFormat s_d_f = new SimpleDateFormat(y_m_d);
-    private static SimpleDateFormat sdf = new SimpleDateFormat(ymd);
+    private static SimpleDateFormat s_d = new SimpleDateFormat(y_m);
     /**
      * get yyyy_MM_dd type date
      *
@@ -46,6 +46,42 @@ public class MyDateFormatUtil {
     public static String dateToStr(Date date){
         return s_d_f.format(date);
     }
+
+    /**
+     * 给定日期前len天的天数集合
+     * @param begin
+     * @param len
+     * @return
+     */
+    public static String dateList(Date begin, int len){
+        StringBuffer datelist = new StringBuffer();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(begin);
+        for (int i=0; i<len; i++){
+            datelist.append(s_d_f.format(calendar.getTime()));
+            datelist.append(",");
+            calendar.add(Calendar.DAY_OF_MONTH,-1);
+        }
+        return datelist.substring(0, datelist.length() - 1);
+    }
+
+    /**
+     * 给定日期前len天的天数集合
+     * @param begin
+     * @param len
+     * @return
+     */
+    public static String monthList(Date begin, int len){
+        StringBuffer datelist = new StringBuffer();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(begin);
+        for (int i=0; i<len; i++){
+            datelist.append(s_d.format(calendar.getTime()));
+            datelist.append(",");
+            calendar.add(Calendar.MONTH,-1);
+        }
+        return datelist.substring(0,datelist.length()-1);
+    }
     /**
      * get the total days of that month according to the given time
      */
@@ -67,7 +103,7 @@ public class MyDateFormatUtil {
 
         return mils.intValue();
     }
-    
+
     /**
      * 判断日期是否在当前周内
      *
@@ -120,5 +156,9 @@ public class MyDateFormatUtil {
             } while (d1.get(Calendar.YEAR) != y2);
         }
         return days;
+    }
+
+    public static void main(String[] args){
+        System.out.print(monthList(new Date(),12));
     }
 }

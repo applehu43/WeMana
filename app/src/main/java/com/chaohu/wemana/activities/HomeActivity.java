@@ -34,30 +34,28 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        setTitle("Weight Manager");
         setContentView(R.layout.activity_wemana_main);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+
+        setTitle("Manager your Weight");
+
 
         mAdapter = new HomeFragmentPagerAdapter(getSupportFragmentManager());
         InitTextView();
 
         mPager = (ViewPager) findViewById(R.id.vPager);
-        mPager.setOffscreenPageLimit(4);
+        mPager.setOffscreenPageLimit(3);
         mPager.setAdapter(mAdapter);
 
         mPager.addOnPageChangeListener(this);
 
         FileHelper fileHelper = new FileHelper(this.getApplicationContext());
-        String text_val = fileHelper.readFromSD("exceptWeightHeight.txt");
-//        String text_val = fileHelper.readFromDataFiles("exceptWeightHeight.txt");
+        String text_val = fileHelper.readFromSD(FileHelper.TXT_NAME);
         if("fileNotFound".equals(text_val)){
-            mPager.setCurrentItem(4);
-            radioButtons[4].setSelected(true);
+            mPager.setCurrentItem(3);
+            radioButtons[3].setSelected(true);
         }else{
-//            String[] result_val = text_val.split(",");
-//            new BMIDemo(new BigDecimal(result_val[0]),new BigDecimal(result_val[1]));
             mPager.setCurrentItem(0);
             radioButtons[0].setSelected(true);
         }
@@ -82,9 +80,6 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
             case R.id.text3:
                 mPager.setCurrentItem(3);
                 break;
-            case R.id.text4:
-                mPager.setCurrentItem(4);
-                break;
         }
     }
 
@@ -103,7 +98,7 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         if (state == 2) {
             int curItem = mPager.getCurrentItem();
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 4; i++) {
                 if (curItem == i) {
                     radioButtons[i].setSelected(true);
                 } else {
@@ -124,7 +119,6 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
         radioButtons[1] = (RadioButton) findViewById(R.id.text1);
         radioButtons[2] = (RadioButton) findViewById(R.id.text2);
         radioButtons[3] = (RadioButton) findViewById(R.id.text3);
-        radioButtons[4] = (RadioButton) findViewById(R.id.text4);
 
         radioGroup.setOnCheckedChangeListener(this);
     }
@@ -168,4 +162,5 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
         super.onDestroy();
 //        unregisterReceiver(broadcastReceiver);
     }
+
 }
