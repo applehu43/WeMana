@@ -30,7 +30,8 @@ public class WeeklyBarFragment extends BaseGraphFragment {
         mChart.setDrawGridBackground(false);
 
         mChart.setData(generateWeekBarData(6));
-        mChart.animateXY(1000, 1000);
+        mChart.animateX(2400);
+        mChart.animateY(300);
 
         YAxis leftAxis = mChart.getAxisLeft();
         addUpperLower(mChart.getYMax(),leftAxis);

@@ -15,7 +15,7 @@ public class MyDateFormatUtil {
     private static SimpleDateFormat s_d_f = new SimpleDateFormat(y_m_d);
     private static SimpleDateFormat s_d = new SimpleDateFormat(y_m);
     /**
-     * get yyyy_MM_dd type date
+     * get yyyy-MM-dd type date
      *
      * @return
      */
@@ -23,6 +23,16 @@ public class MyDateFormatUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         return s_d_f.format(cal.getTime());
+    }
+    /**
+     * get yyyy-MM type date
+     *
+     * @return
+     */
+    public static String getTheMonth(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return s_d.format(cal.getTime());
     }
 
     /**
@@ -160,5 +170,6 @@ public class MyDateFormatUtil {
 
     public static void main(String[] args){
         System.out.print(monthList(new Date(),12));
+        System.out.print(totalMonthDay(MyDateFormatUtil.strToDate("2016-02-01")));
     }
 }

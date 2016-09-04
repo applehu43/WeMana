@@ -3,6 +3,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">2dp</dimen>
     <dimen name="activity_vertical_margin">2dp</dimen>
+    <dimen name="activity_four_margin">4dp</dimen>
 
     <dimen name="number_button_text_size">24sp</dimen>
     <dimen name="number_view_margin">10dp</dimen>
@@ -10,6 +11,7 @@
     <dimen name="number_view_text_size">43sp</dimen>
     <dimen name="button_separator_line_width">2.45dp</dimen>
     <dimen name="text_view_size">20dp</dimen>
+    <dimen name="text_view_size_big">33dp</dimen>
     <dimen name="text_button_view_size">18dp</dimen>
     <dimen name="my_luck_size">43dp</dimen>
 </resources>

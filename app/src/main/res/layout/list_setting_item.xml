@@ -26,7 +26,6 @@
         android:layout_marginRight="45dp"
         android:background="@drawable/shape_small_corner"
         android:gravity="center|center_vertical"
-        android:text="100.0"
         android:textSize="@dimen/text_button_view_size" />
 
     <TextView

@@ -18,8 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER"></category>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SimpleChartDemo"></activity>
-
+        
         <!-- 定义Android应用的一个组件 -->
         <!--<activity-->
         <!--android:name=".activities.RecordWeightActivity"-->

@@ -16,6 +16,7 @@ import java.io.IOException;
  * Created by chaohu on 2016/4/4.
  */
 public class FileHelper {
+    public static final String ACTION_UPDATE = "update_user_all";
     // 文件保存数据顺序是 身高(CM),体重(KG)
     public static final String TXT_NAME = "exceptWeightHeight.txt";
     private Context mContext;

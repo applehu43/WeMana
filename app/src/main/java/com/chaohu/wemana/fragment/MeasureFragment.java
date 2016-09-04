@@ -1,9 +1,9 @@
 package com.chaohu.wemana.fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,12 +14,16 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.chaohu.wemana.R;
+import com.chaohu.wemana.activities.HomeActivity;
 import com.chaohu.wemana.model.DBColumn;
 import com.chaohu.wemana.utils.DBOpenHelper;
 import com.chaohu.wemana.utils.FileHelper;
@@ -32,7 +36,6 @@ import java.util.Calendar;
  * Created by chaohu on 2016/3/30.
  */
 public class MeasureFragment extends Fragment implements View.OnTouchListener {
-
 
     /**
      * show weight
@@ -69,20 +72,23 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
         View view = inflater.inflate(R.layout.activity_wemana_measure, container, false);
         mContext = getActivity().getApplicationContext();
         myDB = new DBOpenHelper(mContext, DBColumn.db_name, null, 1);
-        InitButtons(view);
+        initButtons(view);
         return view;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            View view = View.inflate(mContext, R.layout.date_time_dialog, null);
+            HomeActivity hActivity = (HomeActivity) getActivity();
+            View view = hActivity.getLayoutInflater().inflate(R.layout.date_time_dialog, null);
             final DatePicker picker = (DatePicker) view.findViewById(R.id.date_picker);
-            builder.setView(view);
+
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(System.currentTimeMillis());
+            cal.setTime(MyDateFormatUtil.strToDate(record_date));
             picker.init(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), null);
+
+            // hide the days !!
+            picker.getCalendarView().setVisibility(View.GONE);
 
             int inType = date_picker.getInputType();
             date_picker.setInputType(InputType.TYPE_NULL);
@@ -90,23 +96,24 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
             date_picker.setInputType(inType);
             date_picker.setSelection(date_picker.getText().length());
 
-            builder.setTitle("choose the date");
-            builder.setPositiveButton("submit", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    record_date = String.format("%d-%02d-%02d", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth());
-                    showWeightOnView(queryWeightByDate(record_date));
-                    date_picker.setText(record_date);
-                    dialog.cancel();
-                }
-            });
-            Dialog dialog = builder.create();
-            dialog.show();
+            // AlertDialog builder =
+            new AlertDialog.Builder(hActivity)
+//                    .setTitle("choose the date")
+                    .setView(view)
+                    .setPositiveButton("submit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            setRecord_date(String.format("%d-%02d-%02d", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth()));
+                            showWeightOnView(queryWeightByDate(record_date));
+                            date_picker.setText(record_date);
+                            dialog.cancel();
+                        }
+                    }).show();
         }
         return true;
     }
 
-    private void InitButtons(View view) {
+    private void initButtons(View view) {
         bt[0] = (Button) view.findViewById(R.id.bt_0);
         bt[1] = (Button) view.findViewById(R.id.bt_1);
         bt[2] = (Button) view.findViewById(R.id.bt_2);
@@ -147,9 +154,9 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 cal.add(Calendar.DAY_OF_MONTH, 1);
                 if (cal.after(now)) {
                     Toast.makeText(mContext, "活在当下~", Toast.LENGTH_SHORT).show();
-                    record_date = MyDateFormatUtil.getToday();
+                    setRecord_date(MyDateFormatUtil.getToday());
                 }else{
-                    record_date = MyDateFormatUtil.dateToStr(cal.getTime());
+                    setRecord_date(MyDateFormatUtil.dateToStr(cal.getTime()));
                 }
                 date_picker.setText(record_date);
                 String queryRes = queryWeightByDate(record_date);
@@ -160,6 +167,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 }else{
                     disableOnclickNumButton();
                 }
+                et_play.setSelection(click_count = 1);
             }
         });
         bt_sub_date.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +176,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(MyDateFormatUtil.strToDate(record_date));
                 cal.add(Calendar.DAY_OF_MONTH, -1);
-                record_date = MyDateFormatUtil.dateToStr(cal.getTime());
+                setRecord_date(MyDateFormatUtil.dateToStr(cal.getTime()));
                 date_picker.setText(record_date);
                 String queryRes = queryWeightByDate(record_date);
                 showWeightOnView(queryRes);
@@ -178,6 +186,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 }else {
                     disableOnclickNumButton();
                 }
+                et_play.setSelection(click_count = 1);
             }
         });
 
@@ -188,6 +197,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 showWeightOnView(str_display.toString());
                 et_play.setSelection(click_count = 1);
                 initNumButton();
+                stopFlick(et_play);
             }
         });
 
@@ -212,13 +222,36 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                 // 保存完后 取消按键的输入
                 disableOnclickNumButton();
                 Toast.makeText(mContext, "保存成功~", Toast.LENGTH_SHORT).show();
-
+                stopFlick(et_play);
+                Intent intent = new Intent(FileHelper.ACTION_UPDATE);
+                getActivity().getApplicationContext().sendBroadcast(intent);
+//
+                HomeActivity homeAct = (HomeActivity) getActivity();
+                homeAct.getmAdapter().notifyDataSetChanged();
             }
 
         });
 
     }
 
+    /**
+     * setter method
+     * */
+    public void setRecord_date(String date) {
+        this.record_date = date;
+    }
+    public void changeToGivenDate(String date){
+        Calendar cal = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+        cal.setTime(MyDateFormatUtil.strToDate(date));
+        now.setTimeInMillis(System.currentTimeMillis());
+        if (cal.after(now)) {
+            date = MyDateFormatUtil.getToday();
+        }
+        setRecord_date(date);
+        date_picker.setText(date);
+        showWeightOnView(queryWeightByDate(date));
+    }
     /**
      * 指定日期查数据
      * @param givenDay
@@ -261,6 +294,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
         et_play.setText(data+"    KG");
     }
 
+
     private void initNumButton(){
         for (int i = 0; i < 10; i++) {
             final String index = String.valueOf(i);
@@ -277,10 +311,26 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
                         click_count = -1;
                     }
                     et_play.setSelection(++click_count);
+                    et_play.setCursorVisible(true);
+                    startFlick(et_play);
                 }
             });
         }
     }
+    private void startFlick(EditText view){
+        if(view == null) return;
+        Animation anim = new AlphaAnimation(1,0);
+        anim.setDuration(600);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setRepeatMode(Animation.REVERSE);
+        view.startAnimation(anim);
+    }
+    private void stopFlick(EditText view){
+        if (view==null) return;
+        view.clearAnimation();
+    }
+
     private void disableOnclickNumButton(){
         for (int i = 0; i < 10; i++) {
             bt[i].setOnClickListener(new View.OnClickListener() {

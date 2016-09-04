@@ -38,4 +38,9 @@ public class ChartFragmentPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 3;
     }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
 }

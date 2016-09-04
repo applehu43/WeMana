@@ -41,7 +41,7 @@ public class DailyLineFragment extends BaseGraphFragment {
 
 
         // 水平轴的图表值动画
-        mChart.animateX(3000);
+        mChart.animateX(1800);
 
         Typeface tf = Typeface.createFromAsset(getActivity().getAssets(),"OpenSans-Regular.ttf");
 

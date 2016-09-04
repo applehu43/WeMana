@@ -14,6 +14,43 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_four_margin"
+            android:layout_gravity="center|center_vertical">
+            <TextView
+                android:id="@+id/list_record_year"
+                android:gravity="center"
+                android:layout_weight="1.2"
+                android:textSize="@dimen/text_view_size_big"
+                android:background="@drawable/shape_round_corner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/list_date_add"
+                android:text="+"
+                android:background="@drawable/shape_save_reset"
+                android:textSize="@dimen/text_button_view_size"
+                android:layout_width="0dp"
+                android:layout_weight="1.3"/>
+            <TextView
+                android:id="@+id/list_record_month"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textSize="@dimen/text_view_size_big"
+                android:background="@drawable/shape_round_corner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/list_date_sub"
+                android:text="-"
+                android:background="@drawable/shape_save_reset"
+                android:textSize="@dimen/text_button_view_size"
+                android:layout_width="0dp"
+                android:layout_weight="1.3"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center|center_vertical">
 
             <Button

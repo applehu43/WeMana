@@ -22,15 +22,15 @@ public class MonthlyBarFragment extends BaseGraphFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.frag_simple_bar, container, false);
+        View v = inflater.inflate(R.layout.frag_simple_bar2, container, false);
 
-        mChart = (BarChart) v.findViewById(R.id.barChart1);
+        mChart = (BarChart) v.findViewById(R.id.barChart2);
 
         mChart.setDescription("");
         mChart.setDrawGridBackground(false);
 
         mChart.setData(generateMonthBarData(7));
-        mChart.animateXY(1000, 1000);
+        mChart.animateXY(2400, 900);
 
         YAxis leftAxis = mChart.getAxisLeft();
         addUpperLower(mChart.getYMax(), leftAxis);

@@ -1,7 +1,9 @@
 package com.chaohu.wemana.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +81,26 @@ public class SettingsFragment extends Fragment {
             BMIDemo bmiDemo = new BMIDemo(settingInfos.get(0).getText().substring(0, 3),
                     settingInfos.get(1).getText().substring(0, 5));
             bmiShow.setText(bmiDemo.calculateBMI().toString());
-            bmiName.setText(bmiDemo.indexOfBMI(bmiDemo.calculateBMI()));
+            String bmistr = bmiDemo.indexOfBMI(bmiDemo.calculateBMI());
+            bmiName.setText(bmistr);
+            int color;
+            switch (bmistr) {
+                case BMIDemo.BMI_THIN:
+                    color = Color.LTGRAY;
+                    break;
+                case BMIDemo.BMI_NORMAL:
+                    color = Color.GREEN;
+                    break;
+                case BMIDemo.BMI_FAT:
+                case BMIDemo.BMI_OBESITY:
+                    color = Color.RED;
+                    break;
+                default:
+                    color = Color.BLUE;
+                    break;
+            }
+            bmiShow.setTextColor(color);
+            bmiName.setTextColor(color);
         }
 
         View footView = inflater.inflate(R.layout.list_setting_foot_item, null, false);
@@ -89,13 +110,17 @@ public class SettingsFragment extends Fragment {
         final EditText editText = (EditText) inflater.inflate(R.layout.list_setting_item, null, false).findViewById(R.id.setting_data);
         editText.setFocusable(false);
         editText.setClickable(false);
+        editText.setSelected(false);
 
         editButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                Toast.makeText(getActivity().getApplicationContext(), "you can edit now~", Toast.LENGTH_SHORT).show();
                 editText.setFocusable(true);
                 editText.setClickable(true);
+                editText.setSelected(true);
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             }
         });
 
@@ -116,6 +141,7 @@ public class SettingsFragment extends Fragment {
                 if ("OK".equals(saveResult)) {
                     editText.setFocusable(false);
                     editText.setClickable(false);
+                    editText.setSelected(false);
                     Toast.makeText(getActivity().getApplicationContext(), "save success~", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "save fail...", Toast.LENGTH_SHORT).show();
@@ -127,7 +153,7 @@ public class SettingsFragment extends Fragment {
         listView.addHeaderView(headView);
         listView.addFooterView(footView);
 
-        SettingListAdapter listAdapter = new SettingListAdapter(settingInfos, getContext());
+        SettingListAdapter listAdapter = new SettingListAdapter(settingInfos, getActivity().getApplicationContext());
         listView.setAdapter(listAdapter);
         return view;
     }

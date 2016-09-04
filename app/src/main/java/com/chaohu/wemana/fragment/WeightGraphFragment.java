@@ -37,10 +37,10 @@ public class WeightGraphFragment extends Fragment implements RadioGroup.OnChecke
         initTextView(view);
 
         mPager = (ViewPager) view.findViewById(R.id.graphPager);
-        adapter = new ChartFragmentPagerAdapter(getFragmentManager());
+        adapter = new ChartFragmentPagerAdapter(getChildFragmentManager());
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(0);
-        mPager.setOffscreenPageLimit(3);
+        mPager.setOffscreenPageLimit(1);
         mPager.addOnPageChangeListener(this);
         radioButtons[0].setSelected(true);
         return view;

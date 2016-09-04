@@ -110,7 +110,7 @@ public class BaseGraphFragment extends Fragment {
             }
 
         }
-        l_upper = l_upper.add(BigDecimal.valueOf(3));
+        l_upper = l_upper.add(BigDecimal.valueOf(1));
         l_lower = l_lower.subtract(BigDecimal.valueOf(3));
         leftAxis.setAxisMinValue(l_lower.floatValue());
         leftAxis.setAxisMaxValue(l_upper.floatValue());
@@ -123,12 +123,17 @@ public class BaseGraphFragment extends Fragment {
         ll1.setTextSize(10f);
         ll1.setTypeface(tf);
         leftAxis.addLimitLine(ll1);
+        LimitLine ll2 = new LimitLine(value.floatValue(), value.toString());
+        ll2.setLineWidth(2f);
+        ll2.enableDashedLine(10f, 10f, 0f);
+        ll2.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+        leftAxis.addLimitLine(ll2);
     }
     protected LineData generateLineData(int day_len) {
         // 查询30天的数据
         String dateStr =  MyDateFormatUtil.dateList(new Date(), day_len);
 
-        myDB = new DBOpenHelper(getContext(), DBColumn.db_name, null, 1);
+        myDB = new DBOpenHelper(getActivity().getApplicationContext(), DBColumn.db_name, null, 1);
 
 //        List<ContentValues> valuelist = this.jsonToArray();
 //        DBOpenHelper.delteValues(myDB.getWritableDatabase());
@@ -139,15 +144,21 @@ public class BaseGraphFragment extends Fragment {
         ArrayList<String> xdate = new ArrayList<String>();
         ArrayList<Entry> yweight = new ArrayList<Entry>();
         int i = 0;
-        int len = cursor.getCount();
+//        int len = cursor.getCount();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(MyDateFormatUtil.strToDate(MyDateFormatUtil.getToday()));
         while (cursor.moveToNext()){
-            if (i == len-1){
+            String recordDate = cursor.getString(cursor.getColumnIndex(DBColumn.record_date));
+            Date rdate = MyDateFormatUtil.strToDate(recordDate);
+            Calendar rcal = Calendar.getInstance();
+            rcal.setTime(rdate);
+            if (cal.compareTo(rcal) == 0){
                 xdate.add("today");
             }else {
-                xdate.add(""+ (len - i - 1));
+//                xdate.add(""+ (len - i - 1));
+                xdate.add(recordDate.substring(5,recordDate.length()));
             }
             Entry ds2 = new Entry(keep2scale(cursor.getFloat(cursor.getColumnIndex(DBColumn.weight_data))),++i);
-//            xdate.add(cursor.getString(cursor.getColumnIndex(DBColumn.record_date)).substring(5,10));
             yweight.add(ds2);
         }
         LineDataSet xlds = new LineDataSet(yweight, "last "+day_len+" days' weight");
@@ -161,20 +172,19 @@ public class BaseGraphFragment extends Fragment {
     }
 
     protected BarData generateMonthBarData(int month_len){
-        myDB = new DBOpenHelper(getContext(), DBColumn.db_name, null, 1);
+        myDB = new DBOpenHelper(getActivity().getApplicationContext(), DBColumn.db_name, null, 1);
         ArrayList<IBarDataSet> sets = new ArrayList<IBarDataSet>();
         ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
         ArrayList<String> xvals = new ArrayList<String>();
         Cursor cursor = DBOpenHelper.queryAvgWeightMonthly(myDB.getReadableDatabase());
-        int last = cursor.getCount();
         int k = 0;
         cursor.moveToLast();
         while (cursor.moveToPrevious()) {
             entries.add(new BarEntry(keep2scale(cursor.getFloat(cursor.getColumnIndex("avg_weight_data")))
                     , k++));
             xvals.add(cursor.getString(cursor.getColumnIndex("record_month")));
-            if (k >= month_len)
-                break;
+//            if (k >= month_len)
+//                break;
         }
         BarDataSet ds = new BarDataSet(entries,"the last "+xvals.size()+" months' weight");
         ds.setBarSpacePercent(33);
@@ -187,7 +197,7 @@ public class BaseGraphFragment extends Fragment {
         // 查询10周的数据
         String dateStr=MyDateFormatUtil.dateList(new Date(), 7 * week_len);
         String[] dates = dateStr.split(",");
-        myDB = new DBOpenHelper(getContext(), DBColumn.db_name, null, 1);
+        myDB = new DBOpenHelper(getActivity().getApplicationContext(), DBColumn.db_name, null, 1);
         ArrayList<IBarDataSet> sets = new ArrayList<IBarDataSet>();
         ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
         ArrayList<String> xvals = new ArrayList<String>();
@@ -203,7 +213,7 @@ public class BaseGraphFragment extends Fragment {
             }
         }
         BarDataSet ds = new BarDataSet(entries,"the last "+week_len+" weeks' weight");
-        ds.setBarSpacePercent(33);
+        ds.setBarSpacePercent(19);
         sets.add(ds);
         BarData d = new BarData(xvals, sets);
         d.setValueTypeface(tf);

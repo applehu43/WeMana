@@ -30,7 +30,6 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     private RadioButton[] radioButtons = new RadioButton[5];
     private RadioGroup radioGroup;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +37,13 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
-        setTitle("Manager your Weight");
-
+        setTitle("Manage your Weight");
 
         mAdapter = new HomeFragmentPagerAdapter(getSupportFragmentManager());
         InitTextView();
 
         mPager = (ViewPager) findViewById(R.id.vPager);
-        mPager.setOffscreenPageLimit(3);
+        mPager.setOffscreenPageLimit(1);
         mPager.setAdapter(mAdapter);
 
         mPager.addOnPageChangeListener(this);
@@ -59,7 +57,7 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
             mPager.setCurrentItem(0);
             radioButtons[0].setSelected(true);
         }
-//        InitBroadcast();
+        InitBroadcast();
 
     }
 
@@ -108,6 +106,16 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
     }
 
+
+    public HomeFragmentPagerAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+    public void setSelected(int id){
+        InitTextView();
+        onCheckedChanged(radioGroup,id);
+        onPageScrollStateChanged(2);
+    }
     /**
      * 初始化头标
      */
@@ -129,7 +137,7 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     private void InitBroadcast() {
         broadcastReceiver = new MyBroadcastReceiver();
         IntentFilter itf = new IntentFilter();
-        itf.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        itf.addAction(FileHelper.ACTION_UPDATE);
         registerReceiver(broadcastReceiver, itf);
     }
 
@@ -160,7 +168,7 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        unregisterReceiver(broadcastReceiver);
+        unregisterReceiver(broadcastReceiver);
     }
 
 }
