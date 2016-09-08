@@ -39,29 +39,32 @@ public class MonthlyBarFragment extends BaseGraphFragment {
 
         Map<String, Object> combinedMap = generateMonthCombineData();
         List<String> xValue = (List<String>) combinedMap.get("xValue");
-        BarData barData = (BarData) combinedMap.get("barData");
-        LineData lineData = (LineData) combinedMap.get("lineData");
+        if(xValue.size() > 0) {
 
-        CombinedData combinedData = new CombinedData(xValue);
-        combinedData.setData(barData);
-        combinedData.setData(lineData);
-        mChart.setData(combinedData);
+            BarData barData = (BarData) combinedMap.get("barData");
+            LineData lineData = (LineData) combinedMap.get("lineData");
 
-        mChart.setNoDataTextDescription("go recording");
-        mChart.animateXY(2400, 900);
+            CombinedData combinedData = new CombinedData(xValue);
+            combinedData.setData(barData);
+            combinedData.setData(lineData);
+            mChart.setData(combinedData);
 
-        YAxis leftAxis = mChart.getAxisLeft();
-        addUpperLower(mChart.getYMax(), leftAxis);
+            mChart.animateXY(2400, 900);
 
-        mChart.getAxisRight().setEnabled(false);
+            YAxis leftAxis = mChart.getAxisLeft();
+            addUpperLower(mChart.getYMax(), leftAxis);
 
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setEnabled(true);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setAvoidFirstLastClipping(true);
-        xAxis.setTextSize(12f);
+            mChart.getAxisRight().setEnabled(false);
 
+            XAxis xAxis = mChart.getXAxis();
+            xAxis.setEnabled(true);
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setDrawGridLines(false);
+            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setTextSize(12f);
+        }else{
+            mChart.setNoDataTextDescription("go recording");
+        }
         return v;
     }
 }
