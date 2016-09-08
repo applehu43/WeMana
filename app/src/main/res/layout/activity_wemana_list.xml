@@ -36,7 +36,7 @@
                 android:gravity="center"
                 android:layout_weight="1"
                 android:textSize="@dimen/text_view_size_big"
-                android:background="@drawable/shape_round_corner"
+                android:background="@drawable/shape_small_corner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button

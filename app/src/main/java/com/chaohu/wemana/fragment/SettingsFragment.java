@@ -1,9 +1,9 @@
 package com.chaohu.wemana.fragment;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +15,15 @@ import android.widget.Toast;
 
 import com.chaohu.wemana.R;
 import com.chaohu.wemana.adapter.SettingListAdapter;
+import com.chaohu.wemana.model.DBColumn;
 import com.chaohu.wemana.model.SettingInfo;
 import com.chaohu.wemana.utils.BMIDemo;
+import com.chaohu.wemana.utils.DBOpenHelper;
 import com.chaohu.wemana.utils.FileHelper;
+import com.chaohu.wemana.utils.MyDateFormatUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by chaohu on 2016/3/30.
@@ -30,6 +34,9 @@ public class SettingsFragment extends Fragment {
     private final String height_uit = "CM";
     private final String weight_not_found = "000.0";
     private final String weight_unit = "KG";
+
+    private TextView bmiShow;
+    private TextView bmiName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -71,29 +78,48 @@ public class SettingsFragment extends Fragment {
 
         View headView = inflater.inflate(R.layout.list_setting_head_item, null, false);
 
-        TextView bmiShow = (TextView) headView.findViewById(R.id.bmi_value);
-        TextView bmiName = (TextView) headView.findViewById(R.id.bmi_name);
+        DBOpenHelper myDB = new DBOpenHelper(getActivity().getApplicationContext(), DBColumn.db_name, null, 1);
+        // last week's avg BMI
+        Cursor cursor = DBOpenHelper.queryAvgWeightByDate(myDB.getReadableDatabase(),
+                MyDateFormatUtil.dateList(new Date(), 8).split(","));
+        String weight;
+        if (cursor.moveToNext()){
+            weight = cursor.getString(cursor.getColumnIndex("avg_weight_data"));
+        }else {
+            weight = weight_not_found;
+        }
+
+        bmiShow = (TextView) headView.findViewById(R.id.bmi_value);
+        bmiName = (TextView) headView.findViewById(R.id.bmi_name);
         if (height_not_found.equals(settingInfos.get(0).getText()) ||
-                weight_not_found.equals(settingInfos.get(1).getText())) {
+                weight_not_found.equals(settingInfos.get(1).getText())
+                || weight_not_found.equals(weight) || null == weight) {
             bmiShow.setText("- - -");
             bmiName.setText("- - -");
         } else {
-            BMIDemo bmiDemo = new BMIDemo(settingInfos.get(0).getText().substring(0, 3),
-                    settingInfos.get(1).getText().substring(0, 5));
-            bmiShow.setText(bmiDemo.calculateBMI().toString());
-            String bmistr = bmiDemo.indexOfBMI(bmiDemo.calculateBMI());
-            bmiName.setText(bmistr);
+            try {
+                BMIDemo bmiDemo = new BMIDemo(settingInfos.get(0).getText(),
+                        weight);
+                bmiShow.setText(bmiDemo.calculateBMI().toString());
+                String bmistr = bmiDemo.indexOfBMI(bmiDemo.calculateBMI());
+                bmiName.setText(bmistr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getActivity().getApplicationContext(), "input must be numbers", Toast.LENGTH_SHORT).show();
+                return view;
+            }
             int color;
-            switch (bmistr) {
+            switch ((String)bmiName.getText()) {
                 case BMIDemo.BMI_THIN:
                     color = Color.LTGRAY;
                     break;
                 case BMIDemo.BMI_NORMAL:
-                    color = Color.GREEN;
+                    color = Color.MAGENTA;
                     break;
                 case BMIDemo.BMI_FAT:
-                case BMIDemo.BMI_OBESITY:
                     color = Color.RED;
+                    break;
+                case BMIDemo.BMI_OBESITY:
+                    color = Color.CYAN;
                     break;
                 default:
                     color = Color.BLUE;
@@ -107,7 +133,8 @@ public class SettingsFragment extends Fragment {
 
         Button saveButton = (Button) footView.findViewById(R.id.set_save_button);
         Button editButton = (Button) footView.findViewById(R.id.set_reset_button);
-        final EditText editText = (EditText) inflater.inflate(R.layout.list_setting_item, null, false).findViewById(R.id.setting_data);
+        final EditText editText = (EditText) inflater.inflate(R.layout.list_setting_item, null, false)
+                .findViewById(R.id.setting_data);
         editText.setFocusable(false);
         editText.setClickable(false);
         editText.setSelected(false);
@@ -120,7 +147,6 @@ public class SettingsFragment extends Fragment {
                 editText.setFocusable(true);
                 editText.setClickable(true);
                 editText.setSelected(true);
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             }
         });
 

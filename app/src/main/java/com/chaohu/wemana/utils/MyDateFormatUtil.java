@@ -2,6 +2,7 @@ package com.chaohu.wemana.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -169,7 +170,21 @@ public class MyDateFormatUtil {
     }
 
     public static void main(String[] args){
-        System.out.print(monthList(new Date(),12));
-        System.out.print(totalMonthDay(MyDateFormatUtil.strToDate("2016-02-01")));
+        System.out.println(monthList(new Date(), 12));
+        System.out.println(totalMonthDay(MyDateFormatUtil.strToDate("2016-02-01")));
+        ArrayList<String> xdate = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(MyDateFormatUtil.strToDate(MyDateFormatUtil.getToday()));
+        cal.add(Calendar.DAY_OF_MONTH, -5);
+        for (int j=0; j<5; j++) {
+            String recordDate = MyDateFormatUtil.dateToStr(cal.getTime());
+            xdate.add(recordDate.substring(5, recordDate.length()));
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        xdate.add("today");
+        System.out.println(xdate.get(0)+"???");
+        System.out.println(xdate.get(1));
+        System.out.println(xdate.get(5));
+//        System.out.print(xdate.get(9));
     }
 }

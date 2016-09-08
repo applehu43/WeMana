@@ -24,6 +24,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="45dp"
+        android:inputType="numberDecimal"
         android:background="@drawable/shape_small_corner"
         android:gravity="center|center_vertical"
         android:textSize="@dimen/text_button_view_size" />

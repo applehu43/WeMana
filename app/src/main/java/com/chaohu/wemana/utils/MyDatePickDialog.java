@@ -62,7 +62,6 @@ public class MyDatePickDialog implements DatePicker.OnDateChangedListener,
 //        timePicker = (TimePicker) dateLayout.findViewById(R.id.time_picker);
         init(datePicker,null);
 
-
         return dialog;
     }
 
@@ -70,10 +69,10 @@ public class MyDatePickDialog implements DatePicker.OnDateChangedListener,
         LinearLayout dateLayout = (LinearLayout) activity.getLayoutInflater().inflate(
                 R.layout.date_time_dialog,null);
         datePicker = (DatePicker) dateLayout.findViewById(R.id.date_picker);
-        timePicker = (TimePicker) dateLayout.findViewById(R.id.time_picker);
-        init(datePicker,timePicker);
-        timePicker.setIs24HourView(true);
-        timePicker.setOnTimeChangedListener(this);
+//        timePicker = (TimePicker) dateLayout.findViewById(R.id.time_picker);
+//        init(datePicker,timePicker);
+//        timePicker.setIs24HourView(true);
+//        timePicker.setOnTimeChangedListener(this);
 
         dialog = new AlertDialog.Builder(activity)
                 .setTitle(initDate)

@@ -6,15 +6,16 @@
     <DatePicker
         android:id="@+id/date_picker"
         android:gravity="center"
+        android:datePickerMode="spinner"
         android:textSize="20dip"
         android:layout_marginTop="5dip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TimePicker
-        android:id="@+id/time_picker"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></TimePicker>
+    <!--<TimePicker-->
+        <!--android:id="@+id/time_picker"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginTop="5dip"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"></TimePicker>-->
 </LinearLayout>

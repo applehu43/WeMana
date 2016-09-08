@@ -22,27 +22,27 @@
             android:gravity="center_vertical|right"
             android:text="BMI"
             android:textSize="32sp"
-            android:layout_marginTop="50dp" />
-
-        <TextView
-            android:id="@+id/bmi_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="140dp"
-            android:gravity="left|center_vertical"
-            android:textSize="32sp"
-            android:layout_marginTop="50dp" />
+            android:layout_marginTop="40dp" />
 
 
         <TextView
             android:id="@+id/bmi_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="140dp"
+            android:gravity="left|center_vertical"
+            android:textSize="@dimen/number_button_text_size"
+            android:layout_marginTop="45dp" />
+
+        <TextView
+            android:id="@+id/bmi_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="26dp"
             android:gravity="center_vertical|right"
-            android:textSize="@dimen/number_button_text_size"
+            android:textSize="32sp"
             android:layout_marginTop="100dp" />
-
+=
         <TextView
             android:id="@+id/bmi_unit"
             android:layout_width="wrap_content"
@@ -50,8 +50,8 @@
             android:layout_marginLeft="140dp"
             android:gravity="left|center_vertical"
             android:textSize="@dimen/number_button_text_size"
-            android:text="kg/m^2"
-            android:layout_marginTop="100dp" />
+            android:text="kg/㎡"
+            android:layout_marginTop="104dp" />
 
     </FrameLayout>
 

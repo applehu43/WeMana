@@ -13,7 +13,7 @@ public class BMIDemo {
         this.bodyHeight = height;
     }
 
-    public BMIDemo(String height, String weight) {
+    public BMIDemo(String height, String weight) throws NumberFormatException{
         this.targetWeight = new BigDecimal(weight);
         this.bodyHeight = new BigDecimal(height);
     }

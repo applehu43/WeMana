@@ -89,6 +89,7 @@ public class MeasureFragment extends Fragment implements View.OnTouchListener {
 
             // hide the days !!
             picker.getCalendarView().setVisibility(View.GONE);
+//            picker.setCalendarViewShown(false);
 
             int inType = date_picker.getInputType();
             date_picker.setInputType(InputType.TYPE_NULL);

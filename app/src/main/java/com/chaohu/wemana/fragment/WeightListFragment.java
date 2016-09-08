@@ -83,7 +83,6 @@ public class WeightListFragment extends Fragment {
         view_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(months, -1, new DialogInterface.OnClickListener() {
                             @Override
@@ -154,6 +153,7 @@ public class WeightListFragment extends Fragment {
         int length = ids.length;
         TextView[] textViews = new TextView[length];
         Button[] buttons = new Button[length];
+        String[] days = new String[length];
 
         final HomeActivity homeAct = (HomeActivity) getActivity();
         for(int i=0; i<daysOfMonth; i++){
@@ -161,6 +161,7 @@ public class WeightListFragment extends Fragment {
             textViews[i].setText("");
             buttons[i] = (Button) view.findViewById(bdid[i]);
             String day = i<9 ? "0"+(i+1) : ""+(i+1);
+            days[i] = day;
             final String chosenDate = MyDateFormatUtil.getTheMonth(today) + "-" + day;
             buttons[i].setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,24 +184,23 @@ public class WeightListFragment extends Fragment {
 
         String nowstr = MyDateFormatUtil.dateToStr(today);
         String daylen = nowstr.substring(nowstr.length() - 2, nowstr.length());
-        String daystr = MyDateFormatUtil.dateList(today, Integer.valueOf(daylen));
-        Cursor cursor = DBOpenHelper.queryWeightByDate(myDB.getReadableDatabase(), daystr.split(","));
-        int k = 0;
-        Date intervalDay = MyDateFormatUtil.strToDate(nowstr.substring(0,nowstr.length()-2)+"01");
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(intervalDay);
+        String dateListStr = MyDateFormatUtil.dateList(today, Integer.valueOf(daylen));
+        Cursor cursor = DBOpenHelper.queryWeightByDate(myDB.getReadableDatabase(), dateListStr.split(","));
+
         while (cursor.moveToNext()){
             String recordDate = cursor.getString(cursor.getColumnIndex(DBColumn.record_date));
             String result = cursor.getString(cursor.getColumnIndex(DBColumn.weight_data));
+            // remove zero
             BigDecimal removezero = new BigDecimal(result);
+            String dayStr = recordDate.substring(recordDate.length() - 2, recordDate.length());
+            Integer dayInt = Integer.valueOf(dayStr) - 1;
             // underline && color
-            textViews[k].setTextColor(Color.argb(255, (int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)));
-            textViews[k].getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-            textViews[k].getPaint().setColor(Color.WHITE);
+            textViews[dayInt].setTextColor(Color.argb(255, (int) (Math.random() * 255),
+                    (int) (Math.random() * 255), (int) (Math.random() * 255)));
+            textViews[dayInt].getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
-            String day = k<9 ? "0"+(k+1) : ""+(k+1);
-            final String chosenDate = MyDateFormatUtil.getTheMonth(today) + "-" + day;
-            textViews[k].setOnClickListener(new View.OnClickListener() {
+            final String chosenDate = recordDate;
+            textViews[dayInt].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                    Toast.makeText(getContext(),"clicked ha",Toast.LENGTH_SHORT).show();
@@ -211,15 +211,7 @@ public class WeightListFragment extends Fragment {
                 }
             });
 
-            Date rdate = MyDateFormatUtil.strToDate(recordDate);
-            Calendar rcal = Calendar.getInstance();
-            rcal.setTime(rdate);
-            if (cal.compareTo(rcal) == 0){
-                textViews[k++].setText(removezero.toString());
-            }else{
-                textViews[k++].setText("0.00");
-            }
-            cal.add(Calendar.DAY_OF_MONTH, 1);
+            textViews[dayInt].setText(removezero.toString());
         }
     }
 

@@ -28,9 +28,9 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("ALTER TABLE `weight_record` \n" +
-                "CHANGE COLUMN `weight_data` `weight_data` DECIMAL(3,1) NULL  ,\n" +
-                "CHANGE COLUMN `record_date` `record_date` DATE NULL ");
+//        db.execSQL("ALTER TABLE `weight_record` \n" +
+//                "CHANGE COLUMN `weight_data` `weight_data` DECIMAL(3,1) NULL  ,\n" +
+//                "CHANGE COLUMN `record_date` `record_date` DATE NULL ");
     }
 
     public static Cursor queryAllWeight(SQLiteDatabase db){

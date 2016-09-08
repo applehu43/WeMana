@@ -7,9 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chaohu.wemana.R;
-import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.LineData;
+
+import java.util.List;
+import java.util.Map;
 
 
 public class MonthlyBarFragment extends BaseGraphFragment {
@@ -18,18 +24,30 @@ public class MonthlyBarFragment extends BaseGraphFragment {
         return new MonthlyBarFragment();
     }
 
-    private BarChart mChart;
+    private CombinedChart mChart;
+//    private BarChart mChart;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.frag_simple_bar2, container, false);
 
-        mChart = (BarChart) v.findViewById(R.id.barChart2);
+        mChart = (CombinedChart) v.findViewById(R.id.barChart2);
+//        mChart = (BarChart) v.findViewById(R.id.barChart2);
 
         mChart.setDescription("");
         mChart.setDrawGridBackground(false);
 
-        mChart.setData(generateMonthBarData(7));
+        Map<String, Object> combinedMap = generateMonthCombineData();
+        List<String> xValue = (List<String>) combinedMap.get("xValue");
+        BarData barData = (BarData) combinedMap.get("barData");
+        LineData lineData = (LineData) combinedMap.get("lineData");
+
+        CombinedData combinedData = new CombinedData(xValue);
+        combinedData.setData(barData);
+        combinedData.setData(lineData);
+        mChart.setData(combinedData);
+
+        mChart.setNoDataTextDescription("go recording");
         mChart.animateXY(2400, 900);
 
         YAxis leftAxis = mChart.getAxisLeft();
